@@ -58,7 +58,7 @@ const mangaList = [
     title: "Shikimori's Not Just a Cutie",
     cover: "https://uploads.mangadex.org/covers/0aea9f43-d4a9-4bf7-bebc-550a512f9b95/ddb13225-fbf7-47a4-a241-12bca5971745.jpg.512.jpg",
     authors: ["Maki Keigo"],
-    views: 2200,
+    views: 12101200,
     bookmarks: 150,
     date: "5 hours ago",
     chapter: 90,
@@ -68,7 +68,7 @@ const mangaList = [
     title: "SPY×FAMILY",
     cover: "https://uploads.mangadex.org/covers/6b958848-c885-4735-9201-12ee77abcb3c/253cf5e5-41b7-4585-90cf-161fe329c6cb.jpg.512.jpg",
     authors: ["Endou Tatsuya"],
-    views: 2200,
+    views: 122200,
     bookmarks: 150,
     date: "5 hours ago",
     chapter: 50,
@@ -78,11 +78,32 @@ const mangaList = [
     title: "Tate no Yuusha no Nariagari",
     cover: "https://uploads.mangadex.org/covers/0f237a5f-07ad-4e43-bbd9-2a320694434d/db984f48-cf2a-4359-85ca-cc256c66d659.jpg.512.jpg",
     authors: ["Aneko Yusagi", "Aiya Kyu"],
-    views: 2500,
+    views: 25000,
     bookmarks: 120,
     date: "10 years ago",
     chapter: 150
+  },
+  {
+    id: 6,
+    title: "Yuusha, Yamemasu",
+    cover: "https://uploads.mangadex.org/covers/1de22ad9-cb16-4563-9ebb-1e01364e4999/d4bfbe81-ec35-4feb-96af-7972f07f7bb2.jpg.512.jpg",
+    authors: ["Quantum", "Kazato Nori"],
+    views: 125000,
+    bookmarks: 1120,
+    date: "5 years ago",
+    chapter: 25
+  },
+  {
+    id: 7,
+    title: "Shijou Saikyou no Daimaou, Murabito A ni Tensei suru",
+    cover: "https://uploads.mangadex.org/covers/14677fdb-7b5f-4178-9775-dc3e11752f0f/c9ec54b3-09ff-40ba-95f8-be446e5f97c4.jpg.512.jpg",
+    authors: ["Katou Myoujin", "Kobota Misuho"],
+    views: 1250,
+    bookmarks: 10,
+    date: "4 days ago",
+    chapter: 125
   }
+  
 ]
 
 

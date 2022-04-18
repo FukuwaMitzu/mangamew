@@ -3,9 +3,25 @@ import Link from "next/link";
 import Button from "../Button";
 
 const MakeMangaLink = (id)=>{
-    return "/title/" + (id || "");
+    return "/manga/" + (id || "");
 }
-
+const FormatNumber = (number)=>{
+    let temp = number;
+    let i = 0;
+    while(temp>=1000){
+        temp/=1000;
+        i+=1;
+    }
+    let counter = "";
+    if(i>=1){
+        number = temp.toFixed(1);
+        counter = "k";
+    }
+    if(i>=2)counter = "mil";
+    if(i>=3)counter = "bil";
+    
+    return `${number}${counter}`;
+}
 export default function SeasonalMangaCard({id, title, views, bookmarks, cover, authors}){
     return (
         <div className="relative pt-10">
@@ -18,14 +34,14 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
                     </Link>
                 </div>
                 <div className="pt-[155px] w-[55%] relative">    
-                    <div className="flex gap-5 text-sm ml-5">
+                    <div className="flex text-sm ml-5 flex-wrap gap-y-2 gap-x-5">
                         <div className="flex items-center">
-                            {views}
-                            <span class="material-icons-outlined ml-1">visibility</span>
+                            {FormatNumber(views)}
+                            <span className="material-icons-outlined ml-2">visibility</span>
                         </div>
                         <div className="flex items-center">
-                            {bookmarks}
-                            <span class="material-icons text-primary ml-1">bookmark_border</span>
+                            {FormatNumber(bookmarks)}
+                            <span className="material-icons text-primary ml-1">bookmark_border</span>
                         </div>
                     </div>
                     <div className="absolute right-0 bottom-10">
@@ -46,7 +62,7 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
                         </a>
                     </Link>
                     <hr className="border-primary border-t-2 w-1/2 my-3"></hr>
-                    <p className="text-base"><span className="text-primary mr-2 font-bold">#</span>{(authors||[]).join(",")}</p>
+                    <p className="text-base line-clamp-1 text-ellipsis"><span className="text-primary mr-2 font-bold">#</span>{(authors||[]).join(", ")}</p>
                 </div>
             </div>
         </div>

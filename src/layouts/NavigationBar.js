@@ -22,7 +22,6 @@ export default function NavigationBar(){
             <div className="hidden text-sm lg:flex gap-8">
                 <NavigationButton href="/" name="Home"/>
                 <NavigationButton href="/manga" name="Manga list"/>
-                <NavigationButton href="/gerne" name="Gernes"/>
                 <NavigationButton href="/libary" name="Libary"/>
             </div>
             <div className="hidden lg:block w-[48px] h-[48px]">
