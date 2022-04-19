@@ -8,9 +8,10 @@ module.exports = {
       colors:{
         'dominant': '#FFF',
         'primary' : '#FF3366',
+        'primary-dark': '#bf2c51',
         'secondary': '#050816',
         'grey': '#EDEDF4',
-        'grey-dark':'#d4d4e5',
+        'grey-dark': '#d4d4e5',
       }
     },
   },

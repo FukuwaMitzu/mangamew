@@ -13,7 +13,9 @@ body {
 .shadowbox{
   box-shadow: rgba(100, 100, 111, 0.2) 0px .4375rem 1.8125rem 0px;
 }
-
+.shade{
+  @apply bg-secondary opacity-80;
+}
 a {
   color: inherit;
   text-decoration: none;
