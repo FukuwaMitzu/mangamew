@@ -22,7 +22,7 @@ export default function NavigationBar() {
                     </button>
                 }
                 <Link href="/">
-                    <a>
+                    <a className="transition-all">
                         <h1 className="font-bold text-xl">MANGAMEW</h1>
                     </a>
                 </Link>
