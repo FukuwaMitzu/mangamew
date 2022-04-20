@@ -1,27 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../Button";
+import {formatScore} from "../../utilities";
+
 
 const MakeMangaLink = (id)=>{
     return "/manga/" + (id || "");
 }
-const FormatNumber = (number)=>{
-    let temp = number;
-    let i = 0;
-    while(temp>=1000){
-        temp/=1000;
-        i+=1;
-    }
-    let counter = "";
-    if(i>=1){
-        number = temp.toFixed(1);
-        counter = "k";
-    }
-    if(i>=2)counter = "mil";
-    if(i>=3)counter = "bil";
-    
-    return `${number}${counter}`;
-}
+
 export default function SeasonalMangaCard({id, title, views, bookmarks, cover, authors}){
     return (
         <div className="relative pt-10">
@@ -36,11 +22,11 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
                 <div className="pt-[155px] w-[55%] relative">    
                     <div className="flex text-sm ml-5 flex-wrap gap-y-2 gap-x-5">
                         <div className="flex items-center">
-                            {FormatNumber(views)}
+                            {formatScore(views)}
                             <span className="material-icons-outlined ml-2">visibility</span>
                         </div>
                         <div className="flex items-center">
-                            {FormatNumber(bookmarks)}
+                            {formatScore(bookmarks)}
                             <span className="material-icons text-primary ml-1">bookmark_border</span>
                         </div>
                     </div>

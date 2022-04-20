@@ -6,7 +6,8 @@ export default function NavigationButton({name, href}){
     const router = useRouter();
     useEffect(()=>{
         if(router.pathname==href)setIsActive(true);
-    }, [router.pathname]);
+        else setIsActive(false);
+    }, [router.pathname, href]);
     return (
         <Link href={href}>
             <a className="group max-w-max flex flex-col">

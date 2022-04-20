@@ -19,12 +19,12 @@ export default function SideBarButton({ href, children }) {
             if(window.innerWidth<=1280)
             storeDispatch(onSideBarTrigger());
         }
-    },[]);
+    },[storeDispatch]);
 
     useEffect(() => {
         if (href == router.pathname) setState({ isActive: true });
         else setState({ isActive: false });
-    }, [router]);
+    }, [router, href]);
 
     return (
         <Link href={href || "/"}>

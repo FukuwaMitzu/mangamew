@@ -1,8 +1,6 @@
 import { Fragment } from "react";
 import NavigationSection from "../src/components/NavigationSection";
-import SeasonalSwiperList from "../src/components/Cards/SeasonalSwiperList";
-import UpdateSwiperList from "../src/components/Cards/UpdateSwiperList";
-import TagSwiperList from "../src/components/Cards/TagSwiperList";
+import {SeasonalSwiperList, UpdateSwiperList, TagSwiperList} from "../src/components/cards";
 
 const tagList = [
   {
