@@ -13,7 +13,7 @@ export default function NavigationBar() {
     }, []);
 
     return (
-        <div className="flex items-center justify-between w-full sticky inset-0 z-40 bg-dominant py-2">
+        <div className="flex items-center justify-between w-full sticky inset-0 z-40 bg-dominant py-2 px-3">
             <div className="flex items-center">
                 {
                     !sideBarState.isActive &&
