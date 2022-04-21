@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import NavigationSection from "../src/components/NavigationSection";
 import {SeasonalSwiperList, UpdateSwiperList, TagSwiperList} from "../src/components/cards";
-
+import Head from "next/head";
 const tagList = [
   {
     id: 1,
@@ -109,6 +109,9 @@ const mangaList = [
 export default function Home() {
   return (
     <Fragment>
+      <Head>
+          <title>MangaMew</title>
+      </Head>
       <div className="flex flex-col gap-20">
         <NavigationSection title="SEASONAL" href="/manga/seasonal">
           <SeasonalSwiperList list={mangaList} />

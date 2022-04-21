@@ -10,7 +10,7 @@ export default function NavigationBar() {
     const sideBarState = useSelector((state) => state.SideBar);
     const triggerSideBar = useCallback(() => {
         storeDispatch(onSideBarTrigger())
-    }, []);
+    }, [storeDispatch]);
 
     return (
         <div className="flex items-center justify-between w-full sticky inset-0 z-40 bg-dominant py-2 px-3">

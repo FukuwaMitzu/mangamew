@@ -6,14 +6,12 @@ import "swiper/css"
 export default function SeasonalSwiperList({list}){
     return (
         <Swiper
-            slidesPerView="auto"
-            spaceBetween={50}
-            
+            slidesPerView="auto"     
         >
             {
                 list.map((item)=>{
                     return (
-                        <SwiperSlide key={item.id} style={{width: "80%",maxWidth:"550px"}}>
+                        <SwiperSlide key={item.id} style={{width: "80%",maxWidth:"550px", paddingRight:50}}>
                             <SeasonalMangaCard {...item}/>
                         </SwiperSlide>
                     )

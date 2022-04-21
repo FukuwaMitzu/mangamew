@@ -8,12 +8,11 @@ export default function TagwiperList({list}){
     return (
         <Swiper
             slidesPerView="auto"
-            spaceBetween={20}
         >
             {
                 list.map((item)=>{
                     return (
-                        <SwiperSlide key={item.id} style={{width:"80%", maxWidth:300}}>
+                        <SwiperSlide key={item.id} style={{width:"80%", maxWidth:300, paddingRight:20}}>
                             <TagCard {...item}/>
                         </SwiperSlide>
                     )

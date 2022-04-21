@@ -9,12 +9,11 @@ export default function UpdateSwiperList({list}){
     return (
         <Swiper
             slidesPerView="auto"
-            spaceBetween={20}
         >
             {
                 list.map((item)=>{
                     return (
-                        <SwiperSlide key={item.id} style={{width:"80%", maxWidth:300}}>
+                        <SwiperSlide key={item.id} style={{width:"80%", maxWidth:300, paddingRight:20}}>
                             <UpdateMangaCard {...item}/>
                         </SwiperSlide>
                     )
