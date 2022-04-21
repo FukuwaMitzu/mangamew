@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import ChapterCard from "./ChapterCard";
 
 export default function ChapterList({ list }) {
@@ -6,11 +6,21 @@ export default function ChapterList({ list }) {
     
     const changeSimpleMode = ()=>{
         setMode("simple");
+        window.localStorage.setItem("chapterListMode", "simple");
     };
     const changeComplexMode = ()=>{
         setMode("complex");
+        window.localStorage.setItem("chapterListMode", "complex");
     }
-
+    useEffect(()=>{
+        if(typeof window !== undefined){
+            let chapterListMode = window.localStorage.getItem("chapterListMode");
+            if(chapterListMode==null){
+                window.localStorage.setItem("chapterListMode", "simple");
+            }
+            else setMode(chapterListMode);
+        }
+    }, []);
     return (
         <div className="flex flex-col gap-3">
             <div className="bg-grey rounded-xl flex w-fit leading-[0] self-end">
