@@ -59,9 +59,9 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
                         <h1 className="font-bold text-3xl">Filters</h1>
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
                     </div>
-                    <div className="flex">
+                    <div className="flex mt-3">
                         <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-xl text-dominant font-bold p-3 active:bg-primary-dark">Search</button>
-                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl">Reset filter</button>
+                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl">Reset filters</button>
                     </div>
                     {
                         Object.keys(groupList).map((key) => {
