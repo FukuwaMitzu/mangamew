@@ -7,7 +7,7 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
     const [tagList, setTagList] = useState(list);
     const [groupList, setGroupList] = useState({});
     const [filterWindowMode, setfilterWindowMode] = useState(false);
-    
+
     //Update list realtime
     useEffect(() => {
         setTagList(list);
@@ -62,8 +62,8 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
                     </div>
                     <div className="flex mt-3">
-                        <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-xl text-dominant font-bold p-3 active:bg-primary-dark">Search</button>
-                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl">Reset filters</button>
+                        <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-xl text-dominant font-bold p-3 active:bg-primary-dark transition-colors">Search</button>
+                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl transition-colors">Reset filters</button>
                     </div>
                     {
                         Object.keys(groupList).map((key) => {

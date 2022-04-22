@@ -21,7 +21,7 @@ export default function FilterItem({id, name, mode, onFilterChange}){
     };
 
     return (
-        <button className={`${filterMode==1? "bg-primary text-dominant": "bg-grey"} py-1 px-2 rounded-xl ${filterMode==2?"shadow-outline shadow-primary":""}`} onClick={triggerFilterMode}>
+        <button className={`${filterMode==1? "bg-primary text-dominant": "bg-grey"} py-1 px-2 transition-colors rounded-xl ${filterMode==2?"shadow-outline shadow-primary":""}`} onClick={triggerFilterMode}>
             <div className="flex items-center">
                 {
                     filterMode>0 &&
