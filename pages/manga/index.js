@@ -1,5 +1,5 @@
-export default function MangaPage(){
+export default function MangaPage() {
     return (
-        <div></div>
+       <div></div>
     );
 };

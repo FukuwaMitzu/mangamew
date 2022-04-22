@@ -12,6 +12,9 @@ module.exports = {
         'secondary': '#050816',
         'grey': '#EDEDF4',
         'grey-dark': '#d4d4e5',
+      },
+      boxShadow:{
+        'outline': '0px 0px 0px 1px rgba(0,0,0,1)'
       }
     },
   },

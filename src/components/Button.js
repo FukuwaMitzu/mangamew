@@ -8,9 +8,9 @@ const classCustom = (type)=>{
     }
 }
 
-export default function Button({startIcon, endIcon, type, children}){
+export default function Button({startIcon, endIcon, type, children, onClick}){
     return (
-        <button className={`rounded-xl px-3 py-2 ${classCustom(type)} flex gap-2 items-center`}>
+        <button className={`rounded-xl px-3 py-2 ${classCustom(type)} flex gap-2 items-center`} onClick={onClick}>
             {startIcon}
             <div>
                 {children}
