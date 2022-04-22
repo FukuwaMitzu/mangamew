@@ -7,10 +7,12 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
     const [tagList, setTagList] = useState(list);
     const [groupList, setGroupList] = useState({});
     const [filterWindowMode, setfilterWindowMode] = useState(false);
+    
     //Update list realtime
     useEffect(() => {
         setTagList(list);
     }, [list]);
+
     //Update group list 
     useEffect(() => {
         let newList = {};
