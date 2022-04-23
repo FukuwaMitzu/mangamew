@@ -19,10 +19,8 @@ export default function TitlePage({ serverTagList }) {
                     includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
                     excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id)
                 },
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
-                    'Access-Control-Allow-Headers': 'Content-Type'
+                headers:{
+                    "Access-Control-Allow-Origin":"https://mangadex.org"
                 }
             }
         ).then(
