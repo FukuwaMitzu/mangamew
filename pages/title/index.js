@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 import axios from "axios";
@@ -11,46 +11,51 @@ export default function TitlePage({ serverTagList }) {
     const [result, setResult] = useState({});
     const router = useRouter();
 
-    useEffect(()=>{
+    useEffect(() => {
         axios.get(
             "https://api.mangadex.org/manga?limit=32&offset=0&includes[]=cover_art&includes[]=author&includes[]=artist&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[relevance]=desc",
             {
                 params: {
-                    includedTags: tagList.filter((item)=>item.mode==1).map(item=>item.id),
-                    excludedTags: tagList.filter((item)=>item.mode==2).map(item=>item.id)
+                    includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
+                    excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id)
+                },
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
+                    'Access-Control-Allow-Headers': 'Content-Type'
                 }
             }
         ).then(
-            ({data})=>{setResult(data)
+            ({ data }) => {
+                setResult(data)
             }
         );
-        
-    },[tagList]);
 
-    const updateFilter =  (e) => {
-    
-        let includeList = e.filter((item)=>item.mode==1).map(item=>item.id.substring(0, 5)).join(',');
-        let excludeList = e.filter((item)=>item.mode==2).map(item=>item.id.substring(0, 5)).join(',');
+    }, [tagList]);
+
+    const updateFilter = (e) => {
+
+        let includeList = e.filter((item) => item.mode == 1).map(item => item.id.substring(0, 5)).join(',');
+        let excludeList = e.filter((item) => item.mode == 2).map(item => item.id.substring(0, 5)).join(',');
         let searchQuery = {};
 
-        if(includeList)searchQuery['include']=includeList;
-        if(excludeList)searchQuery['exclude']=excludeList;
+        if (includeList) searchQuery['include'] = includeList;
+        if (excludeList) searchQuery['exclude'] = excludeList;
 
         router.push({
             pathname: router.pathname,
             query: searchQuery,
-        }, undefined, {shallow:true});  
-        
-        for(let i=0;i<tagList.length;i++){
-            if(tagList[i].mode!=e[i].mode)
-            {
+        }, undefined, { shallow: true });
+
+        for (let i = 0; i < tagList.length; i++) {
+            if (tagList[i].mode != e[i].mode) {
                 setTagList(e);
                 break;
             }
         }
     };
 
-  
+
     return (
         <Fragment>
             <Head>
@@ -87,10 +92,10 @@ export async function getServerSideProps({ query }) {
     let list = result.data.data.map((item) => {
         let mode = 0;
         include.forEach(element => {
-            if (item.id.startsWith(element) && element!="") mode = 1;
+            if (item.id.startsWith(element) && element != "") mode = 1;
         });
         exclude.forEach(element => {
-            if (item.id.startsWith(element)&& element!="") mode = 2;
+            if (item.id.startsWith(element) && element != "") mode = 2;
         });
         return {
             id: item.id,
