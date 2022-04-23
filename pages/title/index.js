@@ -1,13 +1,34 @@
-import { Fragment } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 import axios from "axios";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
-export default function TitlePage({ tagList }) {
+export default function TitlePage({ serverTagList }) {
+
+    const [tagList, setTagList] = useState(serverTagList);
+    const [result, setResult] = useState({});
     const router = useRouter();
-   
-    const updateFilter = (e) => {
+
+    useEffect(()=>{
+        axios.get(
+            "https://api.mangadex.org/manga?limit=32&offset=0&includes[]=cover_art&includes[]=author&includes[]=artist&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[relevance]=desc",
+            {
+                params: {
+                    includedTags: tagList.filter((item)=>item.mode==1).map(item=>item.id),
+                    excludedTags: tagList.filter((item)=>item.mode==2).map(item=>item.id)
+                }
+            }
+        ).then(
+            ({data})=>{setResult(data)
+            }
+        );
+        
+    },[tagList]);
+
+    const updateFilter =  (e) => {
+    
         let includeList = e.filter((item)=>item.mode==1).map(item=>item.id.substring(0, 5)).join(',');
         let excludeList = e.filter((item)=>item.mode==2).map(item=>item.id.substring(0, 5)).join(',');
         let searchQuery = {};
@@ -18,9 +39,18 @@ export default function TitlePage({ tagList }) {
         router.push({
             pathname: router.pathname,
             query: searchQuery,
-        });    
-    }
+        }, undefined, {shallow:true});  
+        
+        for(let i=0;i<tagList.length;i++){
+            if(tagList[i].mode!=e[i].mode)
+            {
+                setTagList(e);
+                break;
+            }
+        }
+    };
 
+  
     return (
         <Fragment>
             <Head>
@@ -29,7 +59,14 @@ export default function TitlePage({ tagList }) {
             <div>
                 <SearchFilterBar list={tagList} onUpdateFilter={updateFilter}></SearchFilterBar>
             </div>
+            {
+                result=={} &&
+                <div className="text-center mt-5">
+                    <Image src="/images/loading.svg" width={40} height={40}></Image>
+                </div>
+            }
         </Fragment>
+
     );
 }
 
@@ -68,6 +105,6 @@ export async function getServerSideProps({ query }) {
     });
 
     return {
-        props: { tagList: list }
+        props: { serverTagList: list }
     }
 }
