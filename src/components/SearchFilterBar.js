@@ -4,13 +4,13 @@ import { useState } from "react";
 import FilterItem from "./FilterItem";
 
 export default function SearchFilterBar({ list, onUpdateFilter }) {
-    const [tagList, setTagList] = useState([]);
+    const [tagList, setTagList] = useState(list);
     const [groupList, setGroupList] = useState({});
     const [filterWindowMode, setfilterWindowMode] = useState(false);
 
     //Update list realtime
     useEffect(() => {
-        let newList = [...list].map((item)=>{
+        let newList = list.map((item)=>{  
             return {...item};
         })
         setTagList(newList);
@@ -19,6 +19,7 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
     //Update group list 
     useEffect(() => {
         let newList = {};
+        
         tagList.forEach((item) => {
             try {
                 newList[item.group].push(item);
