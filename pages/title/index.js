@@ -59,14 +59,10 @@ export default function TitlePage({ serverTagList }) {
             <div>
                 <SearchFilterBar list={tagList} onUpdateFilter={updateFilter}></SearchFilterBar>
             </div>
-            {
-                result=={} &&
-                <div className="text-center mt-5">
-                    <Image src="/images/loading.svg" width={40} height={40}></Image>
-                </div>
-            }
+            <div className="text-center mt-5">
+                <Image src="/images/loading.svg" width={40} height={40}></Image>
+            </div>
         </Fragment>
-
     );
 }
 
