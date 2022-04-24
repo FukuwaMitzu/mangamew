@@ -5,13 +5,20 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { MangaList } from "../../src/components/cards";
 import Image from "next/image";
+import ResultNavigation from "../../src/components/ResultNavigation";
 
 export default function TitlePage({ query }) {
-    const [searchTitle, setSearchTitle] = useState(query.title || "");
+    const router = useRouter();
+    const [offset, setOffset] = useState(0);
+    const [total, setTotal] = useState(0);
+    const [searchTitle, setSearchTitle] = useState("");
     const [tagList, setTagList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
-    const router = useRouter();
+    
+    useEffect(()=>{
+        setSearchTitle(query.title || router.query.title || "");
+    }, [query, router.query]);
 
     //Init tags
     useEffect(() => {
@@ -86,10 +93,6 @@ export default function TitlePage({ query }) {
         updateTagList();
     }, [router.query]);
 
-    //Update title at real time
-    useEffect(() => {
-        setSearchTitle(router.query.title);
-    }, [router.query]);
 
     //Call api whether tagList or searchTitle states changed
     useEffect(() => {
@@ -107,6 +110,7 @@ export default function TitlePage({ query }) {
             ({ data, status }) => {
                 let temp = {}
                 temp.data = [];
+
                 if (status == 200) {
                     temp.data = data.data.map((item) => {
                         let manga = {};
@@ -135,6 +139,8 @@ export default function TitlePage({ query }) {
                 }
                 setLoading(false);
                 setResult(temp);
+                setTotal(data.total);
+                setOffset(data.offset);
             }
         );
     }, [tagList, searchTitle]);
@@ -188,6 +194,9 @@ export default function TitlePage({ query }) {
                 !loading &&
                 <MangaList list={result.data}></MangaList>
             }
+            <div className="mx-auto w-fit mt-10">
+                <ResultNavigation limit={32} offset={offset} total={total}></ResultNavigation>
+            </div>
         </Fragment>
     );
 }

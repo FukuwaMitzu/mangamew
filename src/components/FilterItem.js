@@ -25,7 +25,7 @@ export default function FilterItem({id, name, mode, onFilterChange}){
             <div className="flex items-center">
                 {
                     filterMode>0 &&
-                    <span className="mr-1 leading-[0]">{filterMode==1? <span className="material-icons-outlined text-sm">add</span>: <span className="material-icons-outlined  text-sm">remove</span>}</span>
+                    <span className="mr-1 leading-[0]">{filterMode==1? <span className="material-icons-outlined !text-sm">add</span>: <span className="material-icons-outlined !text-sm">remove</span>}</span>
                 }
                 {name}
             </div>

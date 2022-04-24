@@ -14,12 +14,12 @@ export default function NavigationBar() {
 
     return (
         <div className="bg-dominant sticky inset-0  z-40 ">
-            <div className="max-w-[1340px] mx-auto flex items-center justify-between w-full py-2 px-3">
+            <div className="max-w-[1340px] mx-auto flex items-center justify-between w-full py-2 px-5">
                 <div className="flex items-center">
                     {
                         !sideBarState.isActive &&
                         <button className="flex items-center mr-5" onClick={triggerSideBar}>
-                            <span className="material-icons">menu</span>
+                            <span className="material-icons-outlined">menu</span>
                         </button>
                     }
                     <Link href="/">

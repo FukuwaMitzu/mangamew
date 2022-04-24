@@ -3,11 +3,15 @@ import { useState } from "react";
 import FilterItem from "./FilterItem";
 
 export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch }) {
-    const [searchTitle, setSearchTitle] = useState(title);
-    const [tagList, setTagList] = useState(list);
+    const [searchTitle, setSearchTitle] = useState("");
+    const [tagList, setTagList] = useState([]);
     const [groupList, setGroupList] = useState({});
     const [filterWindowMode, setfilterWindowMode] = useState(false);
 
+    //Update title realtime
+    useEffect(() => {
+        setSearchTitle(title);
+    }, [title]);
 
     //Update list realtime
     useEffect(() => {
@@ -61,7 +65,7 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
         }));
     };
 
-    const resetSearch = () =>{
+    const resetSearch = () => {
         setSearchTitle("");
     }
 
@@ -106,12 +110,12 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
                 </div>
             </div>
             <div className="bg-grey flex rounded-xl pl-2 items-center">
-                <span className="material-icons mr-3">search</span>
+                <span className="material-icons-outlined mr-3">search</span>
                 <form className="flex-1" onSubmit={(e) => { e.preventDefault() }}>
                     <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
                 </form>
                 {
-                    searchTitle!="" &&
+                    searchTitle != "" &&
                     <button onClick={resetSearch} className="leading-[0] px-2"><span className="material-icons-outlined">close</span></button>
                 }
                 <button onClick={triggerFilterWindow} className="bg-primary text-dominant rounded-xl flex items-center py-2 px-3 active:bg-primary-dark transition-all">

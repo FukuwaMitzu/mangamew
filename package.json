@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fontsource/material-icons": "^4.5.4",
     "@fontsource/material-icons-outlined": "^4.5.4",
     "@fontsource/poppins": "^4.5.5",
     "@reduxjs/toolkit": "^1.8.1",

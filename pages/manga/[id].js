@@ -99,13 +99,12 @@ export default function MangaPage(props) {
             <Head>
                 <title>{props.title}</title>
             </Head>
-            <div className="relative min-w-0 w-full lg:pt-16 overflow-hidden">
-                <div className="hidden text-grey font-bold text-8xl absolute top-0 lg:block">
+            <div className="relative min-w-0 w-full lg:pt-10">
+                <div className="hidden text-grey font-bold text-8xl fixed top-20 lg:block -z-10">
                     <p>Oda Tomohito</p>
                     <p>Yuki</p>
                 </div>
-                <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[936px] m-auto relative">
-                    <div className="hidden bg-primary w-[138px] h-[calc(100%_+_40px)] absolute -left-10 -top-10 lg:block"></div>
+                <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[1080px] m-auto relative">            
                     <div className="relative w-full sm:w-[255px] h-[200px] sm:h-[350px] flex-shrink-0 rounded-xl overflow-hidden shadowbox">
                         <Image layout="fill" src="/images/exam2.jpg" className="object-cover object-top" priority></Image>
                     </div>
@@ -124,7 +123,7 @@ export default function MangaPage(props) {
                             </div>
                             <div className="flex items-center">
                                 200k
-                                <span className="material-icons text-primary ml-1">bookmark_border</span>
+                                <span className="material-icons-outlined text-primary ml-1">bookmark_border</span>
                             </div>
                         </div>
                         <div className="lg:w-2/3 sm:mt-6">
@@ -137,8 +136,8 @@ export default function MangaPage(props) {
                     </div>
                 </div>
             </div>
-            <div className="flex mt-10 gap-5 justify-between flex-col lg:flex-row ">
-                <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey text-sm">
+            <div className="flex lg:mt-10 py-10 gap-5 justify-between flex-col lg:flex-row bg-dominant">
+                <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey">
                     <Section title="Story">
                         {"Komi-san is a beautiful and admirable girl that no one can take their eyes off of. Almost the whole school sees her as the cold beauty that's out of their league, but Tadano Hitohito knows the truth: she's just really bad at communicating with others. Komi-san, who wishes to fix this bad habit of hers, tries to improve it with the help of Tadano-kun by achieving her goal of having 100 friends."}
                     </Section>

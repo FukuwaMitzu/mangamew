@@ -12,10 +12,12 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
     return (
         <div className="relative pt-10">
             <div className="flex max-w-[550px] h-[350px] w-full">
-                <div className="shadowbox w-[45%] relative flex-grow rounded-xl overflow-hidden bg-grey">
+                <div className="shadowbox w-[45%] flex-grow rounded-xl overflow-hidden bg-grey">
                     <Link href={MakeMangaLink(id)}>
                         <a>
-                            <Image layout="fill" src={cover || "/"} className="object-cover" priority></Image>
+                            <div className="relative w-full h-full">
+                                <Image layout="fill" src={cover || "/"} className="object-cover" priority></Image>
+                            </div>
                         </a>
                     </Link>
                 </div>
@@ -27,7 +29,7 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
                         </div>
                         <div className="flex items-center">
                             {formatScore(bookmarks)}
-                            <span className="material-icons text-primary ml-1">bookmark_border</span>
+                            <span className="material-icons-outlined text-primary ml-1">bookmark_border</span>
                         </div>
                     </div>
                     <div className="absolute right-0 bottom-10">

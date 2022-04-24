@@ -20,7 +20,7 @@ export default function UpdateMangaCard({ id, title, chapter, cover, date }) {
                         <div className="flex flex-grow-0 flex-shrink-0 justify-between items-center text-sm">
                             <div className="font-bold">Chapter <span className="text-primary">{chapter}</span></div>
                             <div className="flex items-center gap-1 opacity-60">
-                                <span className="material-icons text-base">schedule</span>
+                                <span className="material-icons-outlined text-base">schedule</span>
                                 <span>{date}</span>
                             </div>
                         </div>

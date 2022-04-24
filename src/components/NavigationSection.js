@@ -10,7 +10,7 @@ export default function NavigationSection({title, href, children}){
                 <div className="flex-grow-0 flex-shrink-0">
                     <Link href={href||"/"}>
                         <a>
-                            <span className="material-icons text-4xl">east</span>
+                            <span className="material-icons-outlined text-4xl">east</span>
                         </a>
                     </Link>
                 </div>
