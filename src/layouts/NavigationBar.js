@@ -13,33 +13,36 @@ export default function NavigationBar() {
     }, [storeDispatch]);
 
     return (
-        <div className="flex items-center justify-between w-full sticky inset-0 z-40 bg-dominant py-2 px-3">
-            <div className="flex items-center">
-                {
-                    !sideBarState.isActive &&
-                    <button className="flex items-center mr-5" onClick={triggerSideBar}>
-                        <span className="material-icons">menu</span>
-                    </button>
-                }
-                <Link href="/">
-                    <a className="transition-all">
-                        <h1 className="font-bold text-xl">MANGAMEW</h1>
-                    </a>
-                </Link>
-            </div>
-            <div className="hidden text-sm max-w-max lg:block transition-all">
-                <SearchBar size={55}></SearchBar>
-            </div>
-            <div className="flex items-center">
-                <div className="hidden text-sm lg:flex gap-8">
-                    <NavigationButton href="/" name="Home" />
-                    <NavigationButton href="/manga" name="Manga list" />
-                    <NavigationButton href="/libary" name="Libary" />
+        <div className="bg-dominant sticky inset-0  z-40 ">
+            <div className="max-w-[1340px] mx-auto flex items-center justify-between w-full py-2 px-3">
+                <div className="flex items-center">
+                    {
+                        !sideBarState.isActive &&
+                        <button className="flex items-center mr-5" onClick={triggerSideBar}>
+                            <span className="material-icons">menu</span>
+                        </button>
+                    }
+                    <Link href="/">
+                        <a className="transition-all">
+                            <h1 className="font-bold text-xl">MANGAMEW</h1>
+                        </a>
+                    </Link>
                 </div>
-                <div className="hidden lg:block w-[48px] h-[48px] ml-10">
-                    <Avatar></Avatar>
+                <div className="hidden text-sm max-w-max lg:block transition-all">
+                    <SearchBar size={55}></SearchBar>
+                </div>
+                <div className="flex items-center">
+                    <div className="hidden text-sm lg:flex gap-8">
+                        <NavigationButton href="/" name="Home" />
+                        <NavigationButton href="/manga" name="Manga list" />
+                        <NavigationButton href="/libary" name="Libary" />
+                    </div>
+                    <div className="hidden lg:block w-[48px] h-[48px] ml-10">
+                        <Avatar></Avatar>
+                    </div>
                 </div>
             </div>
         </div>
+
     );
 }

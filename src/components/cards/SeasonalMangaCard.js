@@ -15,7 +15,7 @@ export default function SeasonalMangaCard({id, title, views, bookmarks, cover, a
                 <div className="shadowbox w-[45%] relative flex-grow rounded-xl overflow-hidden bg-grey">
                     <Link href={MakeMangaLink(id)}>
                         <a>
-                            <Image layout="fill" src={cover || "/"} className="object-cover"></Image>
+                            <Image layout="fill" src={cover || "/"} className="object-cover" priority></Image>
                         </a>
                     </Link>
                 </div>

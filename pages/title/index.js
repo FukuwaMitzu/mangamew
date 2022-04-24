@@ -3,15 +3,17 @@ import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 import axios from "axios";
 import { useRouter } from "next/router";
+import { MangaList } from "../../src/components/cards";
 import Image from "next/image";
 
-export default function TitlePage({query}) {
-    const [searchTitle, setSearchTitle] = useState(query.title||"");
+export default function TitlePage({ query }) {
+    const [searchTitle, setSearchTitle] = useState(query.title || "");
     const [tagList, setTagList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
     const router = useRouter();
 
-    //Init Tags
+    //Init tags
     useEffect(() => {
         let tagResult = tagList;
         let include = [];
@@ -47,8 +49,8 @@ export default function TitlePage({query}) {
         );
     }, []);
 
-    const updateTagList = useMemo(()=>()=>{
-        if(tagList.length==0)return;
+    const updateTagList = useMemo(() => () => {
+        if (tagList.length == 0) return;
         const query = router.query;
         let include = [];
         let exclude = [];
@@ -68,7 +70,7 @@ export default function TitlePage({query}) {
             exclude.forEach(element => {
                 if (item.id.startsWith(element) && element != "") mode = 2;
             });
-            
+
             return {
                 id: item.id,
                 name: item.name,
@@ -79,16 +81,20 @@ export default function TitlePage({query}) {
         setTagList(list);
     });
 
+    //Group tags
     useEffect(() => {
         updateTagList();
     }, [router.query]);
 
-    useEffect(()=>{
+    //Update title at real time
+    useEffect(() => {
         setSearchTitle(router.query.title);
     }, [router.query]);
 
+    //Call api whether tagList or searchTitle states changed
     useEffect(() => {
-        if(tagList.length!=0)axios.get(
+        setLoading(true);
+        if (tagList.length != 0) axios.get(
             "https://api.mangadex.org/manga?&limit=32&offset=0&includes[]=cover_art&includes[]=author&includes[]=artist&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[relevance]=desc",
             {
                 params: {
@@ -98,13 +104,42 @@ export default function TitlePage({query}) {
                 },
             }
         ).then(
-            ({ data }) => {
-                setResult(data);
+            ({ data, status }) => {
+                let temp = {}
+                temp.data = [];
+                if (status == 200) {
+                    temp.data = data.data.map((item) => {
+                        let manga = {};
+                        manga.authors = [];
+                        manga.artists = [];
+                        manga.cover = "/";
+                        manga.id = item.id;
+                        manga.title = item.attributes.title.en;
+                        manga.tags = item.attributes.tags.map((tag) => {
+                            return {
+                                id : tag.id,
+                                name : tag.attributes.name.en,
+                                group : tag.attributes.group,
+                            }
+                        });
+                        item.relationships.forEach((rel)=>{
+                            if(rel.type=="author")manga.authors.push({id:rel.id,name:rel.attributes.name});
+                            else if(rel.type=="artist")manga.artists.push({id:rel.id,name:rel.attributes.name});
+                            else if(rel.type=="cover_art")manga.cover = rel.attributes.fileName;
+                        });
+                        manga.views = Math.floor(Math.random()*1000000)+1;
+                        manga.bookmarks = Math.floor(Math.random()*1000000)+1;
+
+                        return manga;
+                    })
+                }
+                setLoading(false);
+                setResult(temp);
             }
         );
     }, [tagList, searchTitle]);
 
-
+    //Trigger function detects whether tagList is updated
     const updateFilter = (e) => {
         let includeList = e.filter((item) => item.mode == 1).map(item => item.id.substring(0, 5)).join(',');
         let excludeList = e.filter((item) => item.mode == 2).map(item => item.id.substring(0, 5)).join(',');
@@ -112,25 +147,26 @@ export default function TitlePage({query}) {
 
         if (includeList) searchQuery['include'] = includeList;
         if (excludeList) searchQuery['exclude'] = excludeList;
-        
+
 
         for (let i = 0; i < tagList.length; i++) {
             if (tagList[i].mode != e[i].mode) {
                 router.push({
                     pathname: router.pathname,
-                    query: {...searchQuery, title:searchTitle},
-                }, undefined, {shallow:true});
+                    query: { ...searchQuery, title: searchTitle },
+                }, undefined, { shallow: true });
                 break;
             }
-        }   
+        }
     };
 
-    const updateSearch = (e)=>{
-        if(searchTitle!=e){
+    //Trigger function detects whether searchTitle is updated
+    const updateSearch = (e) => {
+        if (searchTitle != e) {
             router.push({
                 pathname: router.pathname,
-                query: {...router.query, title:e},
-            }, undefined, {shallow:true});
+                query: { ...router.query, title: e },
+            }, undefined, { shallow: true });
         }
     }
 
@@ -139,21 +175,26 @@ export default function TitlePage({query}) {
             <Head>
                 <title>Advanced Search</title>
             </Head>
-            <div>
+            <div className="mb-10">
                 <SearchFilterBar list={tagList} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
             </div>
             {
-                result=={} && <div className="text-center mt-5">
-                    <Image src="/images/loading.svg" width={40} height={40}></Image>
+                loading &&
+                <div className="text-center">
+                    <Image src="/images/loading.svg" width={35} height={35}></Image>
                 </div>
+            }
+            {
+                !loading &&
+                <MangaList list={result.data}></MangaList>
             }
         </Fragment>
     );
 }
 
 
-export async function getServerSideProps({query}){
+export async function getServerSideProps({ query }) {
     return {
-        props:{query:query}
+        props: { query: query }
     }
 }

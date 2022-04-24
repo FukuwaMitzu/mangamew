@@ -3,6 +3,10 @@ import App from '../src/layouts/App'
 import { Fragment } from 'react'
 import { Provider } from 'react-redux'
 import store from "../src/store"
+
+import "@fontsource/material-icons-outlined";
+import "@fontsource/material-icons";
+
 function MyApp({ Component, pageProps }) {
   return (
     <Fragment>

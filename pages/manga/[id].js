@@ -107,7 +107,7 @@ export default function MangaPage(props) {
                 <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[936px] m-auto relative">
                     <div className="hidden bg-primary w-[138px] h-[calc(100%_+_40px)] absolute -left-10 -top-10 lg:block"></div>
                     <div className="relative w-full sm:w-[255px] h-[200px] sm:h-[350px] flex-shrink-0 rounded-xl overflow-hidden shadowbox">
-                        <Image layout="fill" src="/images/exam2.jpg" className="object-cover object-top"></Image>
+                        <Image layout="fill" src="/images/exam2.jpg" className="object-cover object-top" priority></Image>
                     </div>
                     <div className="flex flex-col gap-y-2 sm:gap-0">
                         <h1 className="text-xl font-bold sm:text-3xl lg:text-5xl">Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen</h1>
@@ -137,8 +137,8 @@ export default function MangaPage(props) {
                     </div>
                 </div>
             </div>
-            <div className="flex mt-10 gap-10 justify-between flex-col lg:flex-row">
-                <div className="w-full lg:max-w-[470px] lg:sticky lg:top-20 lg:h-fit">
+            <div className="flex mt-10 gap-5 justify-between flex-col lg:flex-row ">
+                <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey text-sm">
                     <Section title="Story">
                         {"Komi-san is a beautiful and admirable girl that no one can take their eyes off of. Almost the whole school sees her as the cold beauty that's out of their league, but Tadano Hitohito knows the truth: she's just really bad at communicating with others. Komi-san, who wishes to fix this bad habit of hers, tries to improve it with the help of Tadano-kun by achieving her goal of having 100 friends."}
                     </Section>

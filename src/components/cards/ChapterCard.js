@@ -3,9 +3,9 @@ import Link from "next/link"
 
 const richFormat = ({ id, title, cover, date, type }) => {
     return (
-        <div className="group flex gap-5 w-full">
-            <div className="relative shadowbox w-[180px] h-[120px] bg-grey overflow-hidden rounded-xl">
-                <Image layout="fill" src={cover || "/"} className="object-cover"></Image>
+        <div className="group flex gap-3 w-full">
+            <div className="relative w-1/3 max-w-[180px] h-[120px] bg-grey overflow-hidden rounded-xl">
+                <Image layout="fill" src={cover || "/"} className="object-cover" width={180} height={120}></Image>
             </div>
             <div className="flex flex-col flex-1 py-2">
                 <h3 className="group-hover:text-primary transition-colors font-bold flex-grow">{title}</h3>

@@ -4,8 +4,8 @@ export default function Document(){
     return (
         <Html>
             <Head>
-                <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp&display=swap" rel="stylesheet" />
-                <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+                <link rel="preconnect" href="https://api.mangadex.org"></link>
+                <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
             </Head>
             <body>
                 <Main/>
