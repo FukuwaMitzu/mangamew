@@ -1,6 +1,6 @@
 
-const classCustom = (type)=>{
-    switch(type){
+const classCustom = (type) => {
+    switch (type) {
         case "outlined":
             return "bg-dominant text-secondary border-2 border-primary active:bg-grey";
         default:
@@ -8,13 +8,16 @@ const classCustom = (type)=>{
     }
 }
 
-export default function Button({startIcon, endIcon, type, children, onClick}){
+export default function Button({ startIcon, endIcon, type, children, onClick }) {
     return (
-        <button className={`rounded-xl px-3 py-2 ${classCustom(type)} flex gap-2 items-center`} onClick={onClick}>
+        <button className={`rounded-xl px-3 py-2 ${classCustom(type)} flex gap-2 items-center transition-all`} onClick={onClick}>
             {startIcon}
-            <div>
-                {children}
-            </div>
+            {
+                children &&
+                <div>
+                    {children}
+                </div>
+            }
             {endIcon}
         </button>
     );

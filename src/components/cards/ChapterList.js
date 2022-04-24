@@ -16,7 +16,7 @@ export default function ChapterList({ list }) {
         if(typeof window !== undefined){
             let chapterListMode = window.localStorage.getItem("chapterListMode");
             if(chapterListMode==null){
-                window.localStorage.setItem("chapterListMode", "simple");
+                window.localStorage.setItem("chapterListMode", "complex");
             }
             else setMode(chapterListMode);
         }

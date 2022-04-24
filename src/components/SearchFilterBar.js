@@ -1,26 +1,26 @@
-import { Fragment, useCallback, useEffect } from "react";
-import Button from "./Button"
+import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { useState } from "react";
 import FilterItem from "./FilterItem";
 
-export default function SearchFilterBar({ list, onUpdateFilter }) {
+export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch }) {
+    const [searchTitle, setSearchTitle] = useState(title);
     const [tagList, setTagList] = useState(list);
     const [groupList, setGroupList] = useState({});
     const [filterWindowMode, setfilterWindowMode] = useState(false);
 
+
     //Update list realtime
     useEffect(() => {
-        let newList = list.map((item)=>{  
-            return {...item};
+        let newList = list.map((item) => {
+            return { ...item };
         })
         setTagList(newList);
     }, [list]);
 
-    //Update group list 
-    useEffect(() => {
+
+    const sortTagGroup = useMemo(() => (e) => {
         let newList = {};
-        
-        tagList.forEach((item) => {
+        e.forEach((item) => {
             try {
                 newList[item.group].push(item);
             }
@@ -32,6 +32,11 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
             newList[key] = newList[key].sort((a, b) => a.name.localeCompare(b.name));
         }
         setGroupList(newList);
+    });
+
+    //Update group list 
+    useEffect(() => {
+        sortTagGroup(tagList);
     }, [tagList]);
 
     const triggerFilterWindow = () => {
@@ -56,11 +61,24 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
         }));
     };
 
+    const resetSearch = () =>{
+        setSearchTitle("");
+    }
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (onSearch) onSearch(searchTitle);
+        }, 450);
+        return () => {
+            clearTimeout(delayDebounceFn);
+        }
+    }, [searchTitle]);
+
     return (
         <Fragment>
             <div className={`fixed w-screen h-screen inset-0 z-50 ${filterWindowMode ? "" : "hidden"}`}>
                 <div className="shade w-full h-full" onClick={triggerFilterWindow}></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dominant w-full max-w-[1280px] max-h-full min-w-0 min-h-0 p-5 overflow-y-scroll flex flex-col">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dominant w-full max-w-[1280px] max-h-full min-w-0 min-h-0 p-5 overflow-y-scroll flex flex-col rounded-xl">
                     <div className="flex justify-between">
                         <h1 className="font-bold text-3xl">Filters</h1>
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
@@ -89,10 +107,17 @@ export default function SearchFilterBar({ list, onUpdateFilter }) {
             </div>
             <div className="bg-grey flex rounded-xl pl-2 items-center">
                 <span className="material-icons mr-3">search</span>
-                <form className="flex-1 pr-2">
-                    <input className="bg-transparent outline-none w-full" type="text" placeholder="Search"></input>
+                <form className="flex-1" onSubmit={(e) => { e.preventDefault() }}>
+                    <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
                 </form>
-                <Button onClick={triggerFilterWindow} startIcon={<span className="material-icons-outlined text-sm">add</span>}>Add filter</Button>
+                {
+                    searchTitle!="" &&
+                    <button onClick={resetSearch} className="leading-[0] px-2"><span className="material-icons-outlined">close</span></button>
+                }
+                <button onClick={triggerFilterWindow} className="bg-primary text-dominant rounded-xl flex items-center py-2 px-3 active:bg-primary-dark transition-all">
+                    <span className="material-icons-outlined">filter_alt</span>
+                    <span className="ml-1 hidden sm:block">Add filters</span>
+                </button>
             </div>
             <div className="flex gap-2 mt-2 flex-wrap text-sm">
                 {
