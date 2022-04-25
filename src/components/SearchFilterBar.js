@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo } from "react";
+import { Fragment, useCallback, useEffect } from "react";
 import { useState } from "react";
 import FilterItem from "./FilterItem";
 
@@ -21,10 +21,10 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
         setTagList(newList);
     }, [list]);
 
-
-    const sortTagGroup = useMemo(() => (e) => {
+    //Update group list 
+    useEffect(() => {
         let newList = {};
-        e.forEach((item) => {
+        tagList.forEach((item) => {
             try {
                 newList[item.group].push(item);
             }
@@ -36,11 +36,6 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
             newList[key] = newList[key].sort((a, b) => a.name.localeCompare(b.name));
         }
         setGroupList(newList);
-    });
-
-    //Update group list 
-    useEffect(() => {
-        sortTagGroup(tagList);
     }, [tagList]);
 
     const triggerFilterWindow = () => {
@@ -69,10 +64,11 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
         setSearchTitle("");
     }
 
+    //Call search action
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (onSearch) onSearch(searchTitle);
-        }, 450);
+        }, 500);
         return () => {
             clearTimeout(delayDebounceFn);
         }
@@ -80,9 +76,9 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
 
     return (
         <Fragment>
-            <div className={`fixed w-screen h-screen inset-0 z-50 ${filterWindowMode ? "" : "hidden"}`}>
-                <div className="shade w-full h-full" onClick={triggerFilterWindow}></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dominant w-full max-w-[1280px] max-h-full min-w-0 min-h-0 p-5 overflow-y-scroll flex flex-col rounded-xl">
+            <div className={`fixed w-full h-full inset-0 z-50 ${filterWindowMode ? "" : "hidden"} flex justify-center items-center`}>
+                <div className={`shade absolute inset-0 w-full h-full ${filterWindowMode ? "animate-fade-in" : ""}`} onClick={triggerFilterWindow}></div>
+                <div className={`${filterWindowMode ? "animate-jump-in" : ""} bg-dominant w-full max-w-[1280px] max-h-[calc(100%_-_2rem)] p-5 m-5 overflow-auto overscroll-contain flex flex-col`}>
                     <div className="flex justify-between">
                         <h1 className="font-bold text-3xl">Filters</h1>
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
@@ -111,7 +107,7 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
             </div>
             <div className="bg-grey flex rounded-xl pl-2 items-center">
                 <span className="material-icons-outlined mr-3">search</span>
-                <form className="flex-1" onSubmit={(e) => { e.preventDefault() }}>
+                <form className="flex-1" onSubmit={(e) => { e.preventDefault(); }}>
                     <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
                 </form>
                 {
@@ -120,7 +116,7 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
                 }
                 <button onClick={triggerFilterWindow} className="bg-primary text-dominant rounded-xl flex items-center py-2 px-3 active:bg-primary-dark transition-all">
                     <span className="material-icons-outlined">filter_alt</span>
-                    <span className="ml-1 hidden sm:block">Add filters</span>
+                    <span className="ml-1 hidden sm:block">Add filter</span>
                 </button>
             </div>
             <div className="flex gap-2 mt-2 flex-wrap text-sm">

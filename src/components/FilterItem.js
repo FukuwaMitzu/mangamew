@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-export default function FilterItem({id, name, mode, onFilterChange}){
+import React from "react";
+function FilterItem({id, name, mode, onFilterChange}){
     /**
      * Mode of filter
      * 0: not active
@@ -32,3 +33,4 @@ export default function FilterItem({id, name, mode, onFilterChange}){
         </button>
     )
 }
+export default React.memo(FilterItem);

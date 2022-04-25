@@ -15,10 +15,7 @@ export default function SideBarButton({ href, children }) {
     const storeDispatch = useDispatch();
 
     const triggerSideBar = useCallback(() => {
-        if (typeof window !== undefined) {
-            if(window.innerWidth<=1280)
-            storeDispatch(onSideBarTrigger());
-        }
+        storeDispatch(onSideBarTrigger());
     },[storeDispatch]);
 
     useEffect(() => {

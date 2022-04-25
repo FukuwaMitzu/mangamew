@@ -1,32 +1,33 @@
 import { useEffect, useState } from "react";
 import ResultNavigationItem from "./ResultNavigationItem";
-export default function ResultNavigation({ offset, limit, total, onPageChange }) {
+export default function ResultNavigation({offset, limit, total, onPageChange }) {
     const [list, setList] = useState([]);
 
     useEffect(() => {
         let newList = [];
 
+        if(offset>=total)return;
+        else if(limit==0)return;
+
         let pages = Math.ceil(total / limit);
+        let pageOffset = offset/limit;
 
-        if (offset > pages) return;
-
-        for (let i = offset - 2; i <= offset + 2; i++) {
-            if (i < 0) continue;
+        for (let i = pageOffset - 2; i <= pageOffset + 2; i++) {
+            if (i < 0)continue;
             if (i == pages) break;
-            newList.push({ id: i, value: i + 1, active: offset == i });
+            newList.push({ id: i, value: i + 1, active: pageOffset == i });
         }
 
         
         if (newList.length > 0) {
-            
-            let mid = newList[Math.round(newList.length / 2)];
-            let n = newList.length;
+            let mid = Math.round(newList.length / 2);
+
             if (newList[0].value > 1) {
-                if (mid.value - 1 > n) newList.unshift({ id: -1});
+                if (newList[mid-1].value - 1 > mid) newList.unshift({ id: -1});
                 newList.unshift({id: 0, value: 1, active:false});
             }
             if(newList[newList.length-1].value < pages){
-                if (pages - mid.value > n) newList.push({ id: -1});
+                if (pages - newList[mid-1].value > mid) newList.push({ id: -2});
                 newList.push({id: pages-1, value: pages, active:false});
             }
         }
@@ -35,13 +36,16 @@ export default function ResultNavigation({ offset, limit, total, onPageChange })
 
     }, [offset, limit, total])
 
+    const updatePageIndex = (e)=>{
+        if(onPageChange)onPageChange(e);
+    }
     return (
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
             {
                 list.map((item)=>{
-                    if(item.id<0)return <span>...</span>
+                    if(item.id<0) return <span className="font-bold" key={item.id}>...</span>
                     else return (
-                        <ResultNavigationItem key={item.id} {...item}></ResultNavigationItem>
+                        <ResultNavigationItem key={item.id} {...item} onTrigger={updatePageIndex}></ResultNavigationItem>
                     )
                 })
             }

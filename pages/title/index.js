@@ -9,17 +9,21 @@ import ResultNavigation from "../../src/components/ResultNavigation";
 
 export default function TitlePage({ query }) {
     const router = useRouter();
-    const [offset, setOffset] = useState(0);
-    const [total, setTotal] = useState(0);
+
+    const [resultNav, setResultNav] = useState({ offset: 0, limit: 32, total: 0});
+
     const [searchTitle, setSearchTitle] = useState("");
     const [tagList, setTagList] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
-    
-    useEffect(()=>{
-        setSearchTitle(query.title || router.query.title || "");
-    }, [query, router.query]);
 
+    useEffect(() => {
+        if (router.isReady && router.query.title != undefined)
+            setSearchTitle(router.query.title);
+    }, [router.query]);
+
+    
     //Init tags
     useEffect(() => {
         let tagResult = tagList;
@@ -55,6 +59,14 @@ export default function TitlePage({ query }) {
             }
         );
     }, []);
+
+    //Init page
+    useEffect(()=>{
+        if(query.page){
+            
+            setResultNav({...resultNav, offset:query.page<=0? 0 :(query.page-1)*32});
+        }
+    },[]);
 
     const updateTagList = useMemo(() => () => {
         if (tagList.length == 0) return;
@@ -93,17 +105,26 @@ export default function TitlePage({ query }) {
         updateTagList();
     }, [router.query]);
 
+    //Page update
+    useEffect(()=>{
+        if(router.query.page){
+            let a = (router.query.page-1)*32;
+            setResultNav({...resultNav, offset:router.query.page<=0? 0 : a});
+        }
+    }, [router.query]);
 
     //Call api whether tagList or searchTitle states changed
     useEffect(() => {
         setLoading(true);
         if (tagList.length != 0) axios.get(
-            "https://api.mangadex.org/manga?&limit=32&offset=0&includes[]=cover_art&includes[]=author&includes[]=artist&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[relevance]=desc",
+            "https://api.mangadex.org/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[relevance]=desc",
             {
                 params: {
                     includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
                     excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id),
-                    title: searchTitle
+                    title: searchTitle,
+                    limit: Math.min(resultNav.limit, 10000-resultNav.offset),
+                    offset: resultNav.offset
                 },
             }
         ).then(
@@ -121,32 +142,34 @@ export default function TitlePage({ query }) {
                         manga.title = item.attributes.title.en;
                         manga.tags = item.attributes.tags.map((tag) => {
                             return {
-                                id : tag.id,
-                                name : tag.attributes.name.en,
-                                group : tag.attributes.group,
+                                id: tag.id,
+                                name: tag.attributes.name.en,
+                                group: tag.attributes.group,
                             }
                         });
-                        item.relationships.forEach((rel)=>{
-                            if(rel.type=="author")manga.authors.push({id:rel.id,name:rel.attributes.name});
-                            else if(rel.type=="artist")manga.artists.push({id:rel.id,name:rel.attributes.name});
-                            else if(rel.type=="cover_art")manga.cover = rel.attributes.fileName;
+                        item.relationships.forEach((rel) => {
+                            if (rel.type == "author") manga.authors.push({ id: rel.id, name: rel.attributes.name });
+                            else if (rel.type == "artist") manga.artists.push({ id: rel.id, name: rel.attributes.name });
+                            else if (rel.type == "cover_art") manga.cover = rel.attributes.fileName;
                         });
-                        manga.views = Math.floor(Math.random()*1000000)+1;
-                        manga.bookmarks = Math.floor(Math.random()*1000000)+1;
+                        manga.views = Math.floor(Math.random() * 1000000) + 1;
+                        manga.bookmarks = Math.floor(Math.random() * 1000000) + 1;
 
                         return manga;
                     })
+
+                    
                 }
                 setLoading(false);
                 setResult(temp);
-                setTotal(data.total);
-                setOffset(data.offset);
+                setResultNav({...resultNav, offset: data.offset, total: Math.min(data.total, 10000)});
             }
         );
     }, [tagList, searchTitle]);
 
     //Trigger function detects whether tagList is updated
     const updateFilter = (e) => {
+        
         let includeList = e.filter((item) => item.mode == 1).map(item => item.id.substring(0, 5)).join(',');
         let excludeList = e.filter((item) => item.mode == 2).map(item => item.id.substring(0, 5)).join(',');
         let searchQuery = {};
@@ -159,7 +182,7 @@ export default function TitlePage({ query }) {
             if (tagList[i].mode != e[i].mode) {
                 router.push({
                     pathname: router.pathname,
-                    query: { ...searchQuery, title: searchTitle },
+                    query: { ...searchQuery, title: searchTitle, page: 1 },
                 }, undefined, { shallow: true });
                 break;
             }
@@ -171,9 +194,16 @@ export default function TitlePage({ query }) {
         if (searchTitle != e) {
             router.push({
                 pathname: router.pathname,
-                query: { ...router.query, title: e },
+                query: { ...router.query, title: e, page: 1 },
             }, undefined, { shallow: true });
         }
+    }
+
+    const updatePageChange = (e) => {
+        router.push({
+            pathname: router.pathname,
+            query: { ...router.query, page: e+1 },
+        }, undefined, { shallow: true });
     }
 
     return (
@@ -181,9 +211,15 @@ export default function TitlePage({ query }) {
             <Head>
                 <title>Advanced Search</title>
             </Head>
-            <div className="mb-10">
+            <div className="mb-8">
                 <SearchFilterBar list={tagList} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
             </div>
+            {
+                !loading &&
+                <p className="font-bold mb-5">
+                    Found <span className="text-primary italic">{resultNav.total}</span> results
+                </p>
+            }
             {
                 loading &&
                 <div className="text-center">
@@ -192,11 +228,14 @@ export default function TitlePage({ query }) {
             }
             {
                 !loading &&
-                <MangaList list={result.data}></MangaList>
+                <Fragment>
+                    <MangaList list={result.data}></MangaList>
+                    <div className="mx-auto w-fit mt-10">
+                        <ResultNavigation limit={32} offset={resultNav.offset} total={resultNav.total} onPageChange={updatePageChange}></ResultNavigation>
+                    </div>
+                </Fragment>
             }
-            <div className="mx-auto w-fit mt-10">
-                <ResultNavigation limit={32} offset={offset} total={total}></ResultNavigation>
-            </div>
+
         </Fragment>
     );
 }

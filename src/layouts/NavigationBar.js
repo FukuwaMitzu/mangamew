@@ -13,7 +13,7 @@ export default function NavigationBar() {
     }, [storeDispatch]);
 
     return (
-        <div className="bg-dominant sticky inset-0  z-40 ">
+        <div className="bg-dominant sticky inset-0  z-40 bg-opacity-95">
             <div className="max-w-[1340px] mx-auto flex items-center justify-between w-full py-2 px-5">
                 <div className="flex items-center">
                     {

@@ -11,7 +11,7 @@ function SideBar(props) {
     }
     return (
         <Fragment>
-            <div className={`fixed inset-0 shade w-full h-full z-50 xl:hidden ${props.isActive? '':'hidden'}`} onClick={triggerSideBar}></div>
+            <div className={`fixed inset-0 shade w-full h-full z-50 xl:hidden ${props.isActive? 'animate-fade-in':'hidden'}`} onClick={triggerSideBar}></div>
             <div className="fixed transition-all bg-dominant z-50 xl:static flex-shrink-0" style={{width: sideBarWidth, marginLeft: props.isActive? 0 : -sideBarWidth}}>
                 <ul className="sticky inset-0 h-screen overflow-y-scroll overscroll-contain content px-3 py-4">
                     <li className="flex mb-3">
