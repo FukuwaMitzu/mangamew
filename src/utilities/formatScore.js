@@ -15,3 +15,8 @@ export default function formatScore(number){
     
     return `${number}${counter}`;
 }
+
+function formatAverage(number){
+    return number.toFixed(2);
+}
+export {formatScore, formatAverage};

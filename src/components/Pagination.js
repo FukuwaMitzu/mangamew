@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ResultNavigationItem from "./ResultNavigationItem";
-export default function ResultNavigation({offset, limit, total, onPageChange }) {
+import PaginationItem from "./PaginationItem";
+export default function Pagination({offset, limit, total, onPageChange }) {
     const [list, setList] = useState([]);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export default function ResultNavigation({offset, limit, total, onPageChange }) 
                 list.map((item)=>{
                     if(item.id<0) return <span className="font-bold" key={item.id}>...</span>
                     else return (
-                        <ResultNavigationItem key={item.id} {...item} onTrigger={updatePageIndex}></ResultNavigationItem>
+                        <PaginationItem key={item.id} {...item} onTrigger={updatePageIndex}></PaginationItem>
                     )
                 })
             }

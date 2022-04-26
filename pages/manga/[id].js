@@ -7,15 +7,15 @@ import Head from "next/head";
 import { ChapterList } from "../../src/components/cards";
 
 const tagList = [
-    { id: 1, title: "School life" },
-    { id: 2, title: "Shounen" },
-    { id: 3, title: "Shoujo" },
-    { id: 4, title: "Award winning" },
-    { id: 5, title: "Sci fi" },
-    { id: 6, title: "Romance" },
-    { id: 7, title: "Slice of life" },
-    { id: 8, title: "Siscon" },
-    { id: 9, title: "Comedy" },
+    { id: 1, name: "School life" },
+    { id: 2, name: "Shounen" },
+    { id: 3, name: "Shoujo" },
+    { id: 4, name: "Award winning" },
+    { id: 5, name: "Sci fi" },
+    { id: 6, name: "Romance" },
+    { id: 7, name: "Slice of life" },
+    { id: 8, name: "Siscon" },
+    { id: 9, name: "Comedy" },
 ]
 
 const chapterList = [

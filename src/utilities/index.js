@@ -1,3 +1,3 @@
-import formatScore from "./formatScore";
+import {formatScore, formatAverage} from "./formatScore";
 
-export {formatScore}
+export {formatScore, formatAverage}

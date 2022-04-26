@@ -1,4 +1,4 @@
-export default function ResultNavigationItem({id, value, active, onTrigger}) {
+export default function PaginationItem({id, value, active, onTrigger}) {
     const triggerItem = ()=>{
         if(!active && onTrigger)onTrigger(id);
     }

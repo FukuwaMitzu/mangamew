@@ -2,59 +2,120 @@ import { Fragment, useCallback, useEffect } from "react";
 import { useState } from "react";
 import FilterItem from "./FilterItem";
 
-export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch }) {
+export default function SearchFilterBar({ title, filterList, demographicList, contentRatingList, publicStatusList, onUpdateFilter, onSearch }) {
     const [searchTitle, setSearchTitle] = useState("");
-    const [tagList, setTagList] = useState([]);
-    const [groupList, setGroupList] = useState({});
+
+    const [demographic, setDemoGraphic] = useState([]);
+    const [contentRating, setContentRating] = useState([]);
+    const [publicStatus, setPublicStatus] = useState([]);
+
+    const [groupList, setGroupList] = useState([]);
     const [filterWindowMode, setfilterWindowMode] = useState(false);
+
+
+
+    useEffect(() => {
+        let newList = demographicList.map((item) => {
+            return { ...item };
+        })
+        setDemoGraphic(newList);
+    }, [demographicList]);
+
+    useEffect(() => {
+        let newList = contentRatingList.map((item) => {
+            return { ...item };
+        })
+        setContentRating(newList);
+    }, [contentRatingList]);
+
+    useEffect(() => {
+        let newList = publicStatusList.map((item) => {
+            return { ...item };
+        })
+        setPublicStatus(newList);
+    }, [publicStatusList]);
+
 
     //Update title realtime
     useEffect(() => {
         setSearchTitle(title);
     }, [title]);
 
-    //Update list realtime
-    useEffect(() => {
-        let newList = list.map((item) => {
-            return { ...item };
-        })
-        setTagList(newList);
-    }, [list]);
-
-    //Update group list 
+    //Update filterList realtime
     useEffect(() => {
         let newList = {};
-        tagList.forEach((item) => {
+        filterList.forEach((item) => {
             try {
-                newList[item.group].push(item);
+                newList[item.group].push({ ...item });
             }
             catch {
-                newList[item.group] = [item];
+                newList[item.group] = [{ ...item }];
             }
         });
         for (var key in newList) {
             newList[key] = newList[key].sort((a, b) => a.name.localeCompare(b.name));
         }
+
+        newList = Object.keys(newList).map((key) => {
+            return [key, newList[key]];
+        });
+        newList.sort((a, b) => a[1].length - b[1].length);
         setGroupList(newList);
-    }, [tagList]);
+    }, [filterList]);
 
     const triggerFilterWindow = () => {
         setfilterWindowMode(!filterWindowMode);
         if (filterWindowMode) updateFilterList();
     };
     const updateFilterList = () => {
-        if (onUpdateFilter) onUpdateFilter(tagList);
+
+        if (onUpdateFilter) onUpdateFilter([].concat(...groupList.map((item) => item[1])), demographic, publicStatus, contentRating);
     }
+
     const onFilter = useCallback((e) => {
-        let newList = tagList.map((item) => {
+        let newList = groupList.map((item) => {
+            for (var a in item[1]) if (item[1][a].id == e.id) item[1][a].mode = e.mode;
+            return item;
+        });
+        setGroupList(newList);
+    }, [groupList]);
+
+    const onDemo = useCallback((e) => {
+        let newList = demographic.map((item) => {
             if (item.id == e.id) item.mode = e.mode;
             return item;
         });
-        setTagList(newList);
-    }, [tagList]);
+        setDemoGraphic(newList);
+    }, [demographic]);
+    const onContent = useCallback((e) => {
+        let newList = contentRating.map((item) => {
+            if (item.id == e.id) item.mode = e.mode;
+            return item;
+        });
+        setContentRating(newList);
+    }, [contentRating]);
+    const onPublic = useCallback((e) => {
+        let newList = publicStatus.map((item) => {
+            if (item.id == e.id) item.mode = e.mode;
+            return item;
+        });
+        setPublicStatus(newList);
+    }, [contentRating]);
 
     const resetFilter = () => {
-        setTagList(tagList.map((item) => {
+        setGroupList(groupList.map((item) => {
+            for (let a in item[1]) { item[1][a].mode = 0; }
+            return item;
+        }));
+        setContentRating(contentRating.map(item => {
+            item.mode = 0;
+            return item;
+        }));
+        setDemoGraphic(demographic.map(item => {
+            item.mode = 0;
+            return item;
+        }));
+        setPublicStatus(publicStatus.map(item => {
             item.mode = 0;
             return item;
         }));
@@ -78,7 +139,7 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
         <Fragment>
             <div className={`fixed w-full h-full inset-0 z-50 ${filterWindowMode ? "" : "hidden"} flex justify-center items-center`}>
                 <div className={`shade absolute inset-0 w-full h-full ${filterWindowMode ? "animate-fade-in" : ""}`} onClick={triggerFilterWindow}></div>
-                <div className={`${filterWindowMode ? "animate-jump-in" : ""} bg-dominant w-full max-w-[1280px] max-h-[calc(100%_-_2rem)] p-5 m-5 overflow-auto overscroll-contain flex flex-col`}>
+                <div className={`${filterWindowMode ? "animate-jump-in" : ""} bg-dominant w-full max-w-[1280px] max-h-full sm:max-h-[calc(100%_-_2rem)] p-10 sm:m-5 overflow-auto overscroll-contain flex flex-col rounded-xl`}>
                     <div className="flex justify-between">
                         <h1 className="font-bold text-3xl">Filters</h1>
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
@@ -87,15 +148,52 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
                         <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-xl text-dominant font-bold p-3 active:bg-primary-dark transition-colors">Search</button>
                         <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl transition-colors">Reset filters</button>
                     </div>
+                    <div className="flex flex-wrap gap-5 mt-10 mb-5">
+                        <div>
+                            <h3 className="font-bold text-xl capitalize mb-2">Demographic</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {
+                                    demographic.map((item) => {
+                                        return <FilterItem key={item.id} {...item} min={0} max={1} onFilterChange={onDemo}></FilterItem>
+                                    })
+                                }
+                                <FilterItem mode={demographic.every(item => item.mode == 0)} max={1} name={"Any"} disable></FilterItem>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-xl capitalize mb-2">Content Rating</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {
+                                    contentRating.map((item) => {
+                                        return <FilterItem key={item.id} {...item} min={0} max={1} onFilterChange={onContent}></FilterItem>
+                                    })
+                                }
+                                <FilterItem mode={contentRating.every(item => item.mode == 0)} max={1} name={"Any"} disable></FilterItem>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-xl capitalize mb-2">Publication Status</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {
+                                    publicStatus.map((item) => {
+                                        return <FilterItem key={item.id} {...item} min={0} max={1} onFilterChange={onPublic}></FilterItem>
+                                    })
+                                }
+                                <FilterItem mode={publicStatus.every(item => item.mode == 0)} max={1} name={"Any"} disable></FilterItem>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr></hr>
                     {
-                        Object.keys(groupList).map((key) => {
+                        groupList.map((group) => {
                             return (
-                                <div key={key} className="my-3">
-                                    <h3 className="font-bold text-xl capitalize mb-2">{key}</h3>
+                                <div key={group[0]} className="my-3">
+                                    <h3 className="font-bold text-xl capitalize mb-2">{group[0]}</h3>
                                     <div className="flex gap-2 flex-wrap">
                                         {
-                                            groupList[key].map((filterItem) => {
-                                                return <FilterItem key={filterItem.id} {...filterItem} onFilterChange={onFilter}></FilterItem>
+                                            group[1].map((filterItem) => {
+                                                return <FilterItem key={filterItem.id} {...filterItem} onFilterChange={onFilter} max={2}></FilterItem>
                                             })
                                         }
                                     </div>
@@ -120,9 +218,38 @@ export default function SearchFilterBar({ title, list, onUpdateFilter, onSearch 
                 </button>
             </div>
             <div className="flex gap-2 mt-2 flex-wrap text-sm">
+                <div className="border-r-2 border-r-grey pr-2 flex flex-wrap gap-2">
+                    {
+                        demographic.filter(item => item.mode > 0).map(item => {
+                            return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onDemo(e); updateFilterList() }} max={1}></FilterItem>
+                        })
+                    }
+                    {
+                        demographic.every(item => item.mode == 0) &&
+                        <FilterItem mode={1} disable name={"Any Demographic"}></FilterItem>
+                    }
+                    {
+                        contentRating.filter(item => item.mode > 0).map(item => {
+                            return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onContent(e); updateFilterList() }} max={1}></FilterItem>
+                        })
+                    }
+                    {
+                        contentRating.every(item => item.mode == 0) &&
+                        <FilterItem mode={1} disable name={"Any Content Rating"}></FilterItem>
+                    }
+                    {
+                        publicStatus.filter(item => item.mode > 0).map(item => {
+                            return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onPublic(e); updateFilterList() }} max={1}></FilterItem>
+                        })
+                    }
+                    {
+                        publicStatus.every(item => item.mode == 0) &&
+                        <FilterItem mode={1} disable name={"Any Publication Status"}></FilterItem>
+                    }
+                </div>
                 {
-                    tagList.filter((item) => item.mode > 0).sort((a, b) => a.name.localeCompare(b.name)).map((item) => {
-                        return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onFilter(e); updateFilterList() }}></FilterItem>
+                    [].concat(...groupList.map(item => item[1])).filter((item) => item.mode > 0).sort((a, b) => a.name.localeCompare(b.name)).map((item) => {
+                        return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onFilter(e); updateFilterList() }} max={2}></FilterItem>
                     })
                 }
             </div>
