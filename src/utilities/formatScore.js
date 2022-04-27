@@ -1,4 +1,6 @@
 export default function formatScore(number){
+    if(isNaN(number) || number===null)return "N/A";
+
     let temp = number;
     let i = 0;
     while(temp>=1000){
@@ -17,6 +19,7 @@ export default function formatScore(number){
 }
 
 function formatAverage(number){
+    if(isNaN(number) || number===null)return "N/A";
     return number.toFixed(2);
 }
 export {formatScore, formatAverage};

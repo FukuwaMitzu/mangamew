@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 import axios from "axios";
@@ -7,7 +7,19 @@ import { MangaList } from "../../src/components/cards";
 import Image from "next/image";
 import Pagination from "../../src/components/Pagination";
 import BackNavigation from "../../src/components/BackNavigation";
+import { MangaMewAPIURL } from "../../src/config";
 
+
+/**
+ * 
+ * include
+ * exclude
+ * page
+ * title
+ * content = contentRaiting
+ * statuses = publicationStatus
+ * demos = demogaphic
+ */
 export default function TitlePage({ query }) {
     const router = useRouter();
 
@@ -54,6 +66,11 @@ export default function TitlePage({ query }) {
             name: "erotica",
             mode: 0,
         },
+        {
+            id: "contentRating-pornographic",
+            name: "pornographic",
+            mode: 0,
+        },
     ]);
     const [publicStatus, setPublickStatus] = useState([
         {
@@ -90,12 +107,12 @@ export default function TitlePage({ query }) {
     useEffect(() => {
         if (router.isReady && router.query.title != undefined)
             setSearchTitle(router.query.title);
-    }, [router.query]);
+    }, [router.query, router.isReady]);
 
 
     //Init tags
     useEffect(() => {
-        let tagResult = tagList;
+        let tagResult = [];
         let include = [];
         let exclude = [];
         try {
@@ -106,7 +123,7 @@ export default function TitlePage({ query }) {
             exclude = query.exclude.split(',');
         }
         catch { }
-        axios.get("https://api.mangadex.org/manga/tag").then(
+        axios.get(MangaMewAPIURL("/manga/tag")).then(
             (res) => {
                 tagResult = res.data.data;
                 let list = tagResult.map((item) => {
@@ -234,18 +251,16 @@ export default function TitlePage({ query }) {
     }, [router.query]);
 
     //Page update
-    useEffect(() => {
-        if (router.query.page) {
-            let a = (router.query.page - 1) * 32;
-            setResultNav({ ...resultNav, offset: router.query.page <= 0 ? 0 : a });
-        }
+    useEffect(() => {   
+        let a = Math.max(0,((router.query.page || 1) - 1)) * 32;
+        setResultNav({ ...resultNav, offset: a});
     }, [router.query]);
 
-    //Call api whether states changed
+    //Call api when states changed
     useEffect(() => {
         setLoading(true);
         if (tagList.length != 0) axios.get(
-            "https://api.mangadex.org/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&order[relevance]=desc",
+            MangaMewAPIURL("/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&order[relevance]=desc&availableTranslatedLanguage[]=en"),
             {
                 params: {
                     includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
@@ -300,17 +315,21 @@ export default function TitlePage({ query }) {
                     ({ data, status }) => {
                         if(status==200)
                         setResult(temp.map(item=>{
+                            item.average = null;
+                            item.follows = null;
                             try
                             {
                                 item.average = data.statistics[item.id].rating.average
-                                item.follows = data.statistics[item.id].follows
                             } catch{}
+                            try{
+                                item.follows = data.statistics[item.id].follows
+                            }catch{}
                             return item;
                         }))
                     }
-                )
+                ).catch(()=>{});
             }
-        )
+        ).catch(()=>{});
     }, [tagList, searchTitle, demographic, contentRating, publicStatus]);
 
     //Trigger function detects whether user closed filter menu
@@ -406,7 +425,7 @@ export default function TitlePage({ query }) {
             {
                 loading &&
                 <div className="text-center">
-                    <Image src="/images/loading.svg" width={35} height={35}></Image>
+                    <Image src="/images/loading.svg" alt="loading" width={35} height={35}></Image>
                 </div>
             }
             {
@@ -418,7 +437,6 @@ export default function TitlePage({ query }) {
                     </div>
                 </Fragment>
             }
-
         </Fragment>
     );
 }

@@ -100,7 +100,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
             return item;
         });
         setPublicStatus(newList);
-    }, [contentRating]);
+    }, [publicStatus]);
 
     const resetFilter = () => {
         setGroupList(groupList.map((item) => {

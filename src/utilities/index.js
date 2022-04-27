@@ -1,3 +1,3 @@
 import {formatScore, formatAverage} from "./formatScore";
-
-export {formatScore, formatAverage}
+import {formatAltTitles, formatDesciption, formatTitle} from "./formatManga";
+export {formatScore, formatAverage, formatAltTitles,formatDesciption,formatTitle}

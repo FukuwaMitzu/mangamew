@@ -2,23 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 import TagGroup from "../TagGroup";
 import { formatScore, formatAverage } from "../../utilities";
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 
 
 
 
 export default function MangaCard({ id, title, tags, authors, artists, cover, status, average, follows }) {
 
-    const uniqueAuthor = useMemo(() => function (au, ar) {
-        au.concat(ar.filter((item => {
-            return !au.every(author => author.name == item.name);
-        })))
+    const uniqueAuthor = (au, ar)=>{
+        au = au.concat(ar.filter((item => {
+            return au.every(e => e.name != item.name);
+        })))   
         return au.map(item => item.name).join(', ');
-    }, [authors, artists]);
+    };
 
     return (
         <div className="flex gap-5 shadowbox rounded-xl overflow-hidden">
-            <div className="basis-1/3 flex-shrink-0 max-w-[150px] min-h-[235px] h-full">
+            <div className="basis-1/3 flex-shrink-0 max-w-[150px] min-h-[237px] h-full">
                 <Link href={`/manga/${id}`}>
                     <a>
                         <div className="relative w-full h-full">
@@ -56,7 +56,7 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
                         {
                             average!==undefined &&
                             <Fragment>
-                                {average?formatAverage(average):"N/A"}
+                                {formatAverage(average)}
                                 <span className="material-icons-outlined ml-1 text-star">star_border</span>
                             </Fragment>
                         }
@@ -65,7 +65,7 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
                         {
                             follows!==undefined &&
                             <Fragment>
-                                {follows? formatScore(follows):"N/A"}
+                                {formatScore(follows)}
                                 <span className="material-icons-outlined text-primary ml-1">bookmark_border</span>
                             </Fragment>
                         }

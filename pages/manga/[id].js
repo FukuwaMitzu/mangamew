@@ -1,22 +1,17 @@
 import Image from "next/image";
 import TagGroup from "../../src/components/TagGroup";
 import Button from "../../src/components/Button";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Section from "../../src/components/Section";
 import Head from "next/head";
 import { ChapterList } from "../../src/components/cards";
+import axios from "axios";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { formatAltTitles, formatAverage, formatDesciption, formatScore, formatTitle } from "../../src/utilities";
+import Link from "next/link";
 
-const tagList = [
-    { id: 1, name: "School life" },
-    { id: 2, name: "Shounen" },
-    { id: 3, name: "Shoujo" },
-    { id: 4, name: "Award winning" },
-    { id: 5, name: "Sci fi" },
-    { id: 6, name: "Romance" },
-    { id: 7, name: "Slice of life" },
-    { id: 8, name: "Siscon" },
-    { id: 9, name: "Comedy" },
-]
+import { MangaMewAPIURL, MangaMewURL } from "../../src/config";
+
 
 const chapterList = [
     {
@@ -93,65 +88,130 @@ const chapterList = [
     },
 ]
 
-export default function MangaPage(props) {
+export default function MangaPage({ id, title, altTitle, tags, authors, artists, cover, description }) {
+    const [average, setAverage] = useState();
+    const [follows, setFollows] = useState();
+
+    useEffect(() => {
+        axios.get(MangaMewAPIURL(`/statistics/manga/${id}`)).then(
+            ({ data }) => {
+                setAverage(data.statistics[id].rating.average);
+                setFollows(data.statistics[id].follows);
+            }
+        ).catch(() => { });
+    }, []);
+
+
+    const uniqueAuthor = (au, ar) => {
+        au = au.concat(ar.filter((item => {
+            return au.every(e => e.name != item.name);
+        })))
+        return au;
+    };
+
+
     return (
         <Fragment>
             <Head>
-                <title>{props.title}</title>
+                <title>{title}</title>
+                <meta name="title" content={title} />
+                <meta name="description" content={description} />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={MangaMewURL}/>
+                <meta property="og:title" content={title} />
+                <meta property="og:description" content={description}/>
+                <meta property="og:image" content={`https://uploads.mangadex.org/covers/${id}/${cover}`} />
             </Head>
             <div className="relative min-w-0 w-full lg:pt-10">
                 <div className="hidden text-grey font-bold text-8xl fixed top-20 lg:block -z-10">
-                    <p>Oda Tomohito</p>
-                    <p>Yuki</p>
+                    {
+                        authors.length > 0 &&
+                        uniqueAuthor(authors, artists).map((item) => {
+                            return <p key={item.id}>{item.name}</p>
+                        })
+                    }
                 </div>
-                <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[1080px] m-auto relative">            
-                    <div className="relative w-full sm:w-[255px] h-[200px] sm:h-[350px] flex-shrink-0 rounded-xl overflow-hidden shadowbox">
-                        <Image layout="fill" src="/images/exam2.jpg" className="object-cover object-top" priority></Image>
+                <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[1080px] m-auto relative">
+                    <div className="relative w-full sm:w-[225px] h-[200px] sm:h-[355px] flex-shrink-0 rounded-xl overflow-hidden shadowbox ">
+                        <div className="w-full h-full bg-grey animate-pulse"></div>
+                        <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} alt={title} className="object-cover object-top" quality={100} priority></Image>
                     </div>
-                    <div className="flex flex-col gap-y-2 sm:gap-0">
-                        <h1 className="text-xl font-bold sm:text-3xl lg:text-5xl">Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen</h1>
+                    <div className="flex flex-col flex-1 gap-y-2 sm:gap-0">
+                        <h1 className="text-xl font-bold sm:text-3xl lg:text-5xl">{title}</h1>
                         <div className="flex items-center md:w-3/4 sm:mt-5">
                             <div className="flex-[0.2] border-primary border-b-2 hidden sm:block"></div>
-                            <p className="sm:px-2 sm:text-lg lg:text-xl">Entangled with the Duke</p>
+                            {altTitle && <p className="sm:px-2 sm:text-lg lg:text-xl">{altTitle}</p>}
                             <div className="flex-1 border-primary border-b-2 hidden sm:block"></div>
                         </div>
-                        <p className="sm:mt-4 italic"><span className="text-primary mr-2 font-bold">#</span>Oda Tomohito, Yuki</p>
-                        <div className="flex text-sm flex-wrap gap-y-2 gap-x-5 sm:mt-3">
+                        <p className="sm:mt-4 italic">
+                            <span className="text-primary mr-2 font-bold">#</span>
+                            {uniqueAuthor(authors, artists).map(item => item.name).join(', ')}
+                        </p>
+                        <div className="flex flex-wrap gap-y-2 gap-x-5 sm:mt-3">
                             <div className="flex items-center">
-                                100k
-                                <span className="material-icons-outlined ml-2">visibility</span>
+                                {formatAverage(average)}
+                                <span className="material-icons-outlined ml-2 text-star">star_border</span>
                             </div>
                             <div className="flex items-center">
-                                200k
+                                {formatScore(follows)}
                                 <span className="material-icons-outlined text-primary ml-1">bookmark_border</span>
                             </div>
                         </div>
                         <div className="lg:w-2/3 sm:mt-6">
-                            <TagGroup list={tagList}></TagGroup>
+                            <TagGroup list={tags}></TagGroup>
                         </div>
                         <div className="flex gap-3 justify-start sm:justify-end mt-3 sm:mt-10 sm:pb-5">
                             <Button>Start reading</Button>
-                            <Button type="outlined" endIcon={<span className="material-icons-outlined text-primary">bookmark_add</span>}>Add to libary</Button>
+                            <Button type="outlined" endIcon={<span className="material-icons-outlined text-primary">bookmark_add</span>}>Follow</Button>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="flex lg:mt-10 py-10 gap-5 justify-between flex-col lg:flex-row bg-dominant">
                 <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey">
-                    <Section title="Story">
-                        {"Komi-san is a beautiful and admirable girl that no one can take their eyes off of. Almost the whole school sees her as the cold beauty that's out of their league, but Tadano Hitohito knows the truth: she's just really bad at communicating with others. Komi-san, who wishes to fix this bad habit of hers, tries to improve it with the help of Tadano-kun by achieving her goal of having 100 friends."}
+                    <Section title="Description">
+                        <div className="text-sm"><ReactMarkdown>{description}</ReactMarkdown></div>
                     </Section>
                     <div className="mt-10">
                         <Section title="Creators">
-                            <div className="flex gap-5">
-                                <p>Author: <a className="text-primary">Oda Tomohito</a></p> 
-                                <p>Artis: <a className="text-primary">Oda Tomohito</a></p>
+                            <div className="flex flex-wrap gap-y-5 gap-x-10">
+                                <div>
+                                    <span className="font-bold">Author</span>
+                                    <ul>
+                                        {
+                                            authors.map((author) => {
+                                                return <li key={author.id}>
+                                                    <Link href={`/author/${author.id}`}>
+                                                        <a className="text-primary">{author.name}</a>
+                                                    </Link>
+                                                </li>
+                                            })
+                                        }
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <span className="font-bold">Artist</span>
+                                    <ul>
+
+                                        {
+                                            artists.map((artist) => {
+                                                return <li key={artist.id}>
+                                                    <Link href={`/artist/${artist.id}`}>
+                                                        <a className="text-primary">{artist.name}</a>
+                                                    </Link>
+                                                </li>
+                                            })
+                                        }
+                                    </ul>
+                                </div>
                             </div>
                         </Section>
                     </div>
                 </div>
                 <div className="flex-1">
-                    <ChapterList list={chapterList}/>
+                    <ChapterList list={chapterList} />
                 </div>
             </div>
         </Fragment>
@@ -159,10 +219,49 @@ export default function MangaPage(props) {
 }
 
 export async function getServerSideProps(context) {
-    return {
-        props: { 
-            params:{...context.params},
-            title: "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen"
+    try {
+        const result = await axios.get(MangaMewAPIURL(`/manga/${context.query.id}?includes[]=cover_art&includes[]=author&includes[]=artist`));
+        const data = result.data.data;
+
+        let title = "";
+        let altTitle = "";
+        let description = "";
+        let authors = [];
+        let artists = [];
+        let cover = "";
+        let tags = data.attributes.tags.map((item) => {
+            return {
+                id: item.id,
+                name: item.attributes.name.en
+            }
+        });
+
+        if (data.attributes.title) title = formatTitle(data.attributes.title);
+        if (data.attributes.altTitles.length > 0) altTitle = formatAltTitles(data.attributes.altTitles);
+        if (data.attributes.description) description = formatDesciption(data.attributes.description);
+
+        data.relationships.forEach((rel) => {
+            if (rel.type == "author") try { authors.push({ id: rel.id, name: rel.attributes.name }); } catch { }
+            else if (rel.type == "artist") try { artists.push({ id: rel.id, name: rel.attributes.name }); } catch { }
+            else if (rel.type == "cover_art") try { cover = rel.attributes.fileName; } catch { }
+        });
+
+        return {
+            props: {
+                id: data.id,
+                title: title,
+                altTitle: altTitle,
+                description: description,
+                authors: authors,
+                artists: artists,
+                cover: cover,
+                tags: tags
+            }
         }
     }
-}
+    catch {
+        return {
+            notFound: true,
+        }
+    };
+};
