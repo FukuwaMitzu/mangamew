@@ -35,6 +35,10 @@ export default function useApiMangaList() {
             let limit = q.limit || 0;
             let offset = q.offset || 0;
 
+
+            
+            
+
             axios.get(MangaMewAPIURL("/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&order[relevance]=desc&availableTranslatedLanguage[]=en"),
                 {
                     params: {

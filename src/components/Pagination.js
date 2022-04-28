@@ -7,6 +7,7 @@ export default function Pagination({ offset, limit, total, onPageChange }) {
     useEffect(() => {
         let newList = [];
         if (offset < total && limit != 0) {
+            
             let pages = Math.ceil(total / limit);
             let pageOffset = offset / limit;
 

@@ -2,7 +2,7 @@
 const classCustom = (type) => {
     switch (type) {
         case "outlined":
-            return "bg-dominant text-secondary border-2 border-primary active:bg-grey";
+            return "text-secondary border-2 border-primary active:bg-grey";
         default:
             return "bg-primary text-dominant rounded-xl active:bg-primary-dark";
     }

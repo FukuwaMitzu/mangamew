@@ -110,7 +110,7 @@ export default function Home() {
   return (
     <Fragment>
       <Head>
-          <title>MangaMew</title>
+          
       </Head>
       <div className="flex flex-col gap-20">
         <NavigationSection title="SEASONAL" href="/manga/seasonal">

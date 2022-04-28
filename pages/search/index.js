@@ -31,8 +31,8 @@ export default function TitlePage({ query }) {
     const [statisticApi, setStasisticParams] = useApiStatisticList();
     const [page, setPage] = usePageIndex(query.page);
 
-    
-    
+
+
 
     const [demographic, setDemoGraphic] = useState([
         {
@@ -112,7 +112,7 @@ export default function TitlePage({ query }) {
 
 
 
-    
+
     //Init tags
     useEffect(() => {
         let include = [];
@@ -125,8 +125,8 @@ export default function TitlePage({ query }) {
             exclude = query.exclude.split(',');
         }
         catch { }
-        setTagApiParams({include: include, exclude: exclude});
-    }, []);
+        setTagApiParams({ include: include, exclude: exclude });
+    }, [query]);
 
     //Init demograp, raiting,...
     useEffect(() => {
@@ -162,7 +162,7 @@ export default function TitlePage({ query }) {
                 )
             );
         }
-    }, []);
+    }, [query]);
 
 
 
@@ -234,14 +234,14 @@ export default function TitlePage({ query }) {
 
 
 
-    useEffect(()=>{
-        if(!tagApi.loading && tagApi.result)
-        setTagList([...tagApi.result.data]);
+    useEffect(() => {
+        if (!tagApi.loading && tagApi.result)
+            setTagList([...tagApi.result.data]);
     }, [tagApi]);
 
 
-    useEffect(()=>{
-        if(tagList.length>0){
+    useEffect(() => {
+        if (tagList.length > 0) {
             setMangaApiParams({
                 includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
                 excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id),
@@ -255,27 +255,26 @@ export default function TitlePage({ query }) {
         }
     }, [tagList, searchTitle, demographic, publicStatus, contentRating]);
 
-    useEffect(()=>{
-        if(!mangaApi.loading && mangaApi.result)
-        {
-            
+    useEffect(() => {
+        if (!mangaApi.loading && mangaApi.result) {
+
             setMangaList(mangaApi.result.data);
-            if(mangaApi.result.data.length>0)setStasisticParams({manga: mangaApi.result.data.map(item=>item.id)});
-            setPage({...page, total:mangaApi.result.total, offset: mangaApi.result.offset, limit: mangaApi.result.limit});
+            setStasisticParams({ manga: mangaApi.result.data.map(item => item.id) });
+            setPage({ ...page, total: mangaApi.result.total });
         }
     }, [mangaApi]);
 
-    useEffect(()=>{
-        if(!statisticApi.loading && statisticApi.result)
-        setMangaList(mangaList.map(item=>{
-            try{
-            item.follows = statisticApi.result.data[item.id].follows;
-            }catch{}
-            try{
-            item.average = statisticApi.result.data[item.id].average;
-            }catch{}
-            return item;
-        }));
+    useEffect(() => {
+        if (!statisticApi.loading && statisticApi.result)
+            setMangaList(mangaList.map(item => {
+                try {
+                    item.follows = statisticApi.result.data[item.id].follows;
+                } catch { }
+                try {
+                    item.average = statisticApi.result.data[item.id].average;
+                } catch { }
+                return item;
+            }));
     }, [statisticApi]);
 
     //Trigger function detects whether user closed filter menu
@@ -346,10 +345,10 @@ export default function TitlePage({ query }) {
         router.push({
             pathname: router.pathname,
             query: { ...router.query, page: e + 1 },
-        }, undefined, { shallow: true, scroll:true });
+        }, undefined, { shallow: true, scroll: true });
     };
 
-    
+ 
     return (
         <Fragment>
             <Head>
@@ -378,7 +377,7 @@ export default function TitlePage({ query }) {
                     </p>
                     <MangaList list={mangaApi.result.data}></MangaList>
                     <div className="mx-auto w-fit mt-10">
-                        <Pagination limit={Math.min(page.limit, 32)} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>
+                        <Pagination limit={page.limit} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>
                     </div>
                 </Fragment>
             }

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect } from "react";
+import { Fragment, useCallback, useEffect, useRef} from "react";
 import { useState } from "react";
 import FilterItem from "./FilterItem";
 
@@ -12,6 +12,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
     const [groupList, setGroupList] = useState([]);
     const [filterWindowMode, setfilterWindowMode] = useState(false);
 
+    const searchTitleRef = useRef();
 
 
     useEffect(() => {
@@ -38,7 +39,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
 
     //Update title realtime
     useEffect(() => {
-        setSearchTitle(title);
+        if(searchTitleRef.current !== document.activeElement)setSearchTitle(title);
     }, [title]);
 
     //Update filterList realtime
@@ -129,7 +130,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (onSearch) onSearch(searchTitle);
-        }, 500);
+        }, 450);
         return () => {
             clearTimeout(delayDebounceFn);
         }
@@ -206,7 +207,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
             <div className="bg-grey flex rounded-xl pl-2 items-center">
                 <span className="material-icons-outlined mr-3">search</span>
                 <form className="flex-1" onSubmit={(e) => { e.preventDefault(); }}>
-                    <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
+                    <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" ref={searchTitleRef} onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
                 </form>
                 {
                     searchTitle != "" &&
@@ -218,7 +219,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
                 </button>
             </div>
             <div className="flex gap-2 mt-2 flex-wrap text-sm">
-                <div className="border-r-2 border-r-grey pr-2 flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
                     {
                         demographic.filter(item => item.mode > 0).map(item => {
                             return <FilterItem key={item.id} {...item} onFilterChange={(e) => { onDemo(e); updateFilterList() }} max={1}></FilterItem>

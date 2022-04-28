@@ -1,5 +1,8 @@
+import Head from "next/head";
 export default function MangaPage() {
     return (
-       <div></div>
+       <Head>
+           <title>Manga</title>
+       </Head>
     );
 };

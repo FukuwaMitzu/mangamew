@@ -40,7 +40,7 @@ function SideBar(props) {
                         </SideBarButton>
                         <ul className="pl-2 flex flex-col gap-1 text-sm">
                             <li>
-                                <SideBarButton href="/title">Advanced Search</SideBarButton>
+                                <SideBarButton href="/search">Advanced Search</SideBarButton>
                             </li>
                             <li>
                                 <SideBarButton href="/manga/latest">Latest Update</SideBarButton>

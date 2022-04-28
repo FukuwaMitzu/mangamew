@@ -13,6 +13,19 @@ import Link from "next/link";
 import { MangaMewAPIURL, MangaMewURL } from "../../src/config";
 
 
+
+
+const customComponents = {
+    a: ({ children, href }) => <a className="text-primary" href={href}>{children}</a>,
+    li: ({ ordered, children }) => <li className={`${ordered ? "list-decimal" : "list-disc"} ml-10 my-2`}>{children}</li>,
+    ol: ({ children }) => <ol className="pt-2">{children}</ol>,
+    ul: ({ children }) => <ul className="pt-2">{children}</ul>,
+    p: ({children})=> <div className="mb-3">{children}</div>,
+    img: ({src})=> <img className="inline-block" src={src}></img>,
+    br: ({})=> <div className="my-1"></div>,
+    hr: ({})=> <hr className="my-2 border-t-grey"></hr>
+}
+
 const chapterList = [
     {
         id: 1,
@@ -118,33 +131,27 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                 <meta name="description" content={description} />
 
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content={MangaMewURL}/>
+                <meta property="og:url" content={MangaMewURL} />
                 <meta property="og:title" content={title} />
-                <meta property="og:description" content={description}/>
+                <meta property="og:description" content={description} />
                 <meta property="og:image" content={`https://uploads.mangadex.org/covers/${id}/${cover}`} />
             </Head>
-            <div className="relative min-w-0 w-full lg:pt-10">
-                <div className="hidden text-grey font-bold text-8xl fixed top-20 lg:block -z-10">
-                    {
-                        authors.length > 0 &&
-                        uniqueAuthor(authors, artists).map((item) => {
-                            return <p key={item.id}>{item.name}</p>
-                        })
-                    }
+            <div className="relative min-w-0 w-full sm:p-5">
+                <div className="hidden sm:block bg-fixed bg-cover inset-0 absolute opacity-10 h-full w-full" style={{ backgroundImage: `url(https://uploads.mangadex.org/covers/${id}/${cover})` }}>
                 </div>
-                <div className="flex flex-col gap-x-12 gap-y-3 sm:flex-row max-w-[1080px] m-auto relative">
-                    <div className="relative w-full sm:w-[225px] h-[200px] sm:h-[355px] flex-shrink-0 rounded-xl overflow-hidden shadowbox ">
+                <div className="flex flex-col gap-x-12 gap-y-3 md:flex-row max-w-[1080px] m-auto relative">
+                    <div className="relative w-full md:w-[225px] h-[200px] md:h-[350px] flex-shrink-0 rounded-xl overflow-hidden shadowbox">
                         <div className="w-full h-full bg-grey animate-pulse"></div>
-                        <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} alt={title} className="object-cover object-top" quality={100} priority></Image>
+                        <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} alt={title} className="object-cover" quality={100} priority></Image>
                     </div>
-                    <div className="flex flex-col flex-1 gap-y-2 sm:gap-0">
-                        <h1 className="text-xl font-bold sm:text-3xl lg:text-5xl">{title}</h1>
-                        <div className="flex items-center md:w-3/4 sm:mt-5">
+                    <div className="flex flex-col flex-1 gap-y-2 sm:gap-0 p-3 sm:p-5 rounded-xl glassbox">
+                        <h1 className="text-lg font-bold md:text-3xl ">{title}</h1>
+                        <div className="flex items-center lg:w-3/4 md:mt-5">
                             <div className="flex-[0.2] border-primary border-b-2 hidden sm:block"></div>
-                            {altTitle && <p className="sm:px-2 sm:text-lg lg:text-xl">{altTitle}</p>}
+                            {altTitle && <p className="text-sm md:text-lg lg:text-xl sm:px-2">{altTitle}</p>}
                             <div className="flex-1 border-primary border-b-2 hidden sm:block"></div>
                         </div>
-                        <p className="sm:mt-4 italic">
+                        <p className="sm:mt-2 md:mt-4">
                             <span className="text-primary mr-2 font-bold">#</span>
                             {uniqueAuthor(authors, artists).map(item => item.name).join(', ')}
                         </p>
@@ -171,7 +178,7 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
             <div className="flex lg:mt-10 py-10 gap-5 justify-between flex-col lg:flex-row bg-dominant">
                 <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey">
                     <Section title="Description">
-                        <div className="text-sm"><ReactMarkdown>{description}</ReactMarkdown></div>
+                        <div className="text-sm"><ReactMarkdown components={customComponents}>{description}</ReactMarkdown></div>
                     </Section>
                     <div className="mt-10">
                         <Section title="Creators">
