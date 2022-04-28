@@ -1,15 +1,19 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
-import axios from "axios";
+
+
 import { useRouter } from "next/router";
 import { MangaList } from "../../src/components/cards";
 import Image from "next/image";
 import Pagination from "../../src/components/Pagination";
 import BackNavigation from "../../src/components/BackNavigation";
-import { MangaMewAPIURL } from "../../src/config";
 
 
+import useApiMangaList from "../../src/hooks/useApiMangaList";
+import useApiTagList from "../../src/hooks/useApiTagList";
+import useApiStatisticList from "../../src/hooks/useApiStatisticList";
+import usePageIndex from "../../src/hooks/usePageIndex";
 /**
  * 
  * include
@@ -22,6 +26,13 @@ import { MangaMewAPIURL } from "../../src/config";
  */
 export default function TitlePage({ query }) {
     const router = useRouter();
+    const [mangaApi, setMangaApiParams] = useApiMangaList();
+    const [tagApi, setTagApiParams] = useApiTagList();
+    const [statisticApi, setStasisticParams] = useApiStatisticList();
+    const [page, setPage] = usePageIndex(query.page);
+
+    
+    
 
     const [demographic, setDemoGraphic] = useState([
         {
@@ -95,24 +106,15 @@ export default function TitlePage({ query }) {
         },
     ]);
 
-
-    const [resultNav, setResultNav] = useState({ offset: 0, limit: 32, total: 0 });
-
-    const [searchTitle, setSearchTitle] = useState("");
     const [tagList, setTagList] = useState([]);
-
-    const [loading, setLoading] = useState(true);
-    const [result, setResult] = useState([]);
-
-    useEffect(() => {
-        if (router.isReady && router.query.title != undefined)
-            setSearchTitle(router.query.title);
-    }, [router.query, router.isReady]);
+    const [searchTitle, setSearchTitle] = useState("");
+    const [mangaList, setMangaList] = useState([]);
 
 
+
+    
     //Init tags
     useEffect(() => {
-        let tagResult = [];
         let include = [];
         let exclude = [];
         try {
@@ -123,34 +125,7 @@ export default function TitlePage({ query }) {
             exclude = query.exclude.split(',');
         }
         catch { }
-        axios.get(MangaMewAPIURL("/manga/tag")).then(
-            (res) => {
-                tagResult = res.data.data;
-                let list = tagResult.map((item) => {
-                    let mode = 0;
-                    include.forEach(element => {
-                        if (item.id.startsWith(element) && element != "") mode = 1;
-                    });
-                    exclude.forEach(element => {
-                        if (item.id.startsWith(element) && element != "") mode = 2;
-                    });
-                    return {
-                        id: item.id,
-                        name: item.attributes.name.en,
-                        group: item.attributes.group,
-                        mode: mode
-                    };
-                });
-                setTagList(list.sort((a, b) => a.name.localeCompare(b.name)));
-            }
-        );
-    }, []);
-
-    //Init page
-    useEffect(() => {
-        if (query.page) {
-            setResultNav({ ...resultNav, offset: query.page <= 0 ? 0 : (query.page - 1) * 32 });
-        }
+        setTagApiParams({include: include, exclude: exclude});
     }, []);
 
     //Init demograp, raiting,...
@@ -189,7 +164,9 @@ export default function TitlePage({ query }) {
         }
     }, []);
 
-    //Update tags
+
+
+    //Update state when router query changed
     useEffect(() => {
         if (tagList.length == 0) return;
         const query = router.query;
@@ -248,89 +225,58 @@ export default function TitlePage({ query }) {
         }));
 
         setTagList(list.sort((a, b) => a.name.localeCompare(b.name)));
-    }, [router.query]);
-
-    //Page update
-    useEffect(() => {   
-        let a = Math.max(0,((router.query.page || 1) - 1)) * 32;
-        setResultNav({ ...resultNav, offset: a});
-    }, [router.query]);
-
-    //Call api when states changed
+    }, [router]);
     useEffect(() => {
-        setLoading(true);
-        if (tagList.length != 0) axios.get(
-            MangaMewAPIURL("/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&order[relevance]=desc&availableTranslatedLanguage[]=en"),
-            {
-                params: {
-                    includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
-                    excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id),
-                    publicationDemographic: demographic.filter((item) => item.mode == 1).map(item => item.name),
-                    contentRating: contentRating.filter((item) => item.mode == 1).map((item) => item.name),
-                    status: publicStatus.filter((item) => item.mode == 1).map((item) => item.name),
-                    title: searchTitle,
-                    limit: Math.min(resultNav.limit, 10000 - resultNav.offset),
-                    offset: resultNav.offset
-                },
-            }
-        ).then(
-            ({ data, status }) => {
-                let temp = []
-                if (status == 200) {
-                    temp = data.data.map((item) => {
-                        let manga = {};
-                        manga.authors = [];
-                        manga.artists = [];
-                        manga.cover = "/";
-                        manga.id = item.id;
-                        manga.status = item.attributes.status;
-                        manga.title = item.attributes.title.en || item.attributes.title[Object.keys( item.attributes.title)[0]];
-                        manga.tags = item.attributes.tags.map((tag) => {
-                            return {
-                                id: tag.id,
-                                name: tag.attributes.name.en,
-                                group: tag.attributes.group,
-                            }
-                        });
-                        item.relationships.forEach((rel) => {
-                            if (rel.type == "author") try { manga.authors.push({ id: rel.id, name: rel.attributes.name }); } catch { }
-                            else if (rel.type == "artist") try { manga.artists.push({ id: rel.id, name: rel.attributes.name }); } catch { }
-                            else if (rel.type == "cover_art") try { manga.cover = rel.attributes.fileName; } catch { }
-                        });
-                        return manga;
-                    })
-                }
-                setLoading(false);
-                setResult(temp);
-                setResultNav({ ...resultNav, offset: data.offset, total: data.total });
+        if (router.isReady && router.query.title != undefined)
+            setSearchTitle(router.query.title);
+    }, [router]);
 
 
-                axios.get("https://api.mangadex.org/statistics/manga",
-                    {
-                        params: {
-                            manga: temp.map((item) => item.id)
-                        }
-                    }
-                ).then(
-                    ({ data, status }) => {
-                        if(status==200)
-                        setResult(temp.map(item=>{
-                            item.average = null;
-                            item.follows = null;
-                            try
-                            {
-                                item.average = data.statistics[item.id].rating.average
-                            } catch{}
-                            try{
-                                item.follows = data.statistics[item.id].follows
-                            }catch{}
-                            return item;
-                        }))
-                    }
-                ).catch(()=>{});
-            }
-        ).catch(()=>{});
-    }, [tagList, searchTitle, demographic, contentRating, publicStatus]);
+
+
+    useEffect(()=>{
+        if(!tagApi.loading && tagApi.result)
+        setTagList([...tagApi.result.data]);
+    }, [tagApi]);
+
+
+    useEffect(()=>{
+        if(tagList.length>0){
+            setMangaApiParams({
+                includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
+                excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id),
+                publicationDemographic: demographic.filter((item) => item.mode == 1).map(item => item.name),
+                contentRating: contentRating.filter((item) => item.mode == 1).map((item) => item.name),
+                status: publicStatus.filter((item) => item.mode == 1).map((item) => item.name),
+                title: searchTitle,
+                limit: Math.min(page.limit, 10000 - page.offset),
+                offset: page.offset
+            });
+        }
+    }, [tagList, searchTitle, demographic, publicStatus, contentRating]);
+
+    useEffect(()=>{
+        if(!mangaApi.loading && mangaApi.result)
+        {
+            
+            setMangaList(mangaApi.result.data);
+            if(mangaApi.result.data.length>0)setStasisticParams({manga: mangaApi.result.data.map(item=>item.id)});
+            setPage({...page, total:mangaApi.result.total, offset: mangaApi.result.offset, limit: mangaApi.result.limit});
+        }
+    }, [mangaApi]);
+
+    useEffect(()=>{
+        if(!statisticApi.loading && statisticApi.result)
+        setMangaList(mangaList.map(item=>{
+            try{
+            item.follows = statisticApi.result.data[item.id].follows;
+            }catch{}
+            try{
+            item.average = statisticApi.result.data[item.id].average;
+            }catch{}
+            return item;
+        }));
+    }, [statisticApi]);
 
     //Trigger function detects whether user closed filter menu
     const updateFilter = (tags, demos, statuses, content) => {
@@ -387,7 +333,6 @@ export default function TitlePage({ query }) {
                 },
             }, undefined, { shallow: true });
     };
-
     //Trigger function detects whether searchTitle is updated
     const updateSearch = (e) => {
         if (searchTitle != e) {
@@ -396,15 +341,15 @@ export default function TitlePage({ query }) {
                 query: { ...router.query, title: e, page: 1 },
             }, undefined, { shallow: true });
         }
-    }
-
+    };
     const updatePageChange = (e) => {
         router.push({
             pathname: router.pathname,
             query: { ...router.query, page: e + 1 },
-        }, undefined, { shallow: true });
-    }
+        }, undefined, { shallow: true, scroll:true });
+    };
 
+    
     return (
         <Fragment>
             <Head>
@@ -413,32 +358,33 @@ export default function TitlePage({ query }) {
             <div className="mb-16">
                 <BackNavigation href={"/"} title={"Advanced Search"}></BackNavigation>
             </div>
-            <div className="mb-8">
-                <SearchFilterBar filterList={tagList} publicStatusList={publicStatus} contentRatingList={contentRating} demographicList={demographic} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
-            </div>
             {
-                !loading &&
-                <p className="font-bold mb-5">
-                    Found <span className="text-primary italic">{resultNav.total}</span> results
-                </p>
+                tagList.length > 0 &&
+                <div className="mb-8">
+                    <SearchFilterBar filterList={tagList} publicStatusList={publicStatus} contentRatingList={contentRating} demographicList={demographic} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
+                </div>
             }
             {
-                loading &&
+                mangaApi.loading &&
                 <div className="text-center">
                     <Image src="/images/loading.svg" alt="loading" width={35} height={35}></Image>
                 </div>
             }
             {
-                !loading &&
+                mangaApi.result && !mangaApi.loading &&
                 <Fragment>
-                    <MangaList list={result}></MangaList>
+                    <p className="font-bold mb-5">
+                        Found <span className="text-primary italic">{page.total}</span> results
+                    </p>
+                    <MangaList list={mangaApi.result.data}></MangaList>
                     <div className="mx-auto w-fit mt-10">
-                        <Pagination limit={32} offset={resultNav.offset} total={Math.min(resultNav.total, 10000)} onPageChange={updatePageChange}></Pagination>
+                        <Pagination limit={Math.min(page.limit, 32)} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>
                     </div>
                 </Fragment>
             }
         </Fragment>
-    );
+    )
+
 }
 
 

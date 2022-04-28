@@ -133,7 +133,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
         return () => {
             clearTimeout(delayDebounceFn);
         }
-    }, [searchTitle]);
+    }, [searchTitle, onSearch]);
 
     return (
         <Fragment>
