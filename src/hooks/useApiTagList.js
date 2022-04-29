@@ -52,7 +52,7 @@ export default function useApiTagList() {
                 setState({...state,loading:false, err: props });
             });
         }
-        mountRef.current = true;
+        else mountRef.current = true;
     }, [params]);
 
     return [state, setParams]

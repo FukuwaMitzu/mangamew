@@ -1,20 +1,28 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { MangaMewAPIURL } from "../config";
+import qs from "qs";
+
+
+const initParams = {
+    includedTags: [],
+    excludedTags: [],
+    publicationDemographic: [],
+    contentRating: [],
+    status: [],
+    title: "",
+    limit: 32,
+    offset: 0,
+    order: { relevance: 'desc' },
+    availableTranslatedLanguage: ['en'],
+    includes: ['cover_art', 'author', 'artist']
+}
 
 export default function useApiMangaList() {
     const mountRef = useRef(false);
 
-    const [params, setParams] = useState({
-        includedTags: [],
-        excludedTags: [],
-        publicationDemographic: [],
-        contentRating: [],
-        status: [],
-        title: "",
-        limit: 32,
-        offset: 0
-    });
+
+    const [params, setParams] = useState(initParams);
     const [state, setState] = useState({
         loading: true,
         result: null,
@@ -23,34 +31,17 @@ export default function useApiMangaList() {
 
     useEffect(() => {
         if (mountRef.current) {
-            if (!state.loading) setState({...state, loading:true});
+            if (!state.loading) setState({ ...state, loading: true });
 
-            let q = params || {};
-            let includedTags = q.includedTags || [];
-            let excludedTags = q.excludedTags || [];
-            let publicationDemographic = q.publicationDemographic || [];
-            let contentRating = q.contentRating || [];
-            let status = q.status || [];
-            let title = q.title || "";
-            let limit = q.limit || 0;
-            let offset = q.offset || 0;
-
-
-            
-            
-
-            axios.get(MangaMewAPIURL("/manga?&includes[]=cover_art&includes[]=author&includes[]=artist&order[relevance]=desc&availableTranslatedLanguage[]=en"),
+            axios.get(MangaMewAPIURL("/manga"),
                 {
                     params: {
-                        includedTags: includedTags,
-                        excludedTags: excludedTags,
-                        publicationDemographic: publicationDemographic,
-                        contentRating: contentRating,
-                        status: status,
-                        title: title,
-                        limit: limit,
-                        offset: offset
+                        ...initParams,
+                        ...params
                     },
+                    paramsSerializer: e=>{
+                        return qs.stringify(e);
+                    }
                 }).then(({ data, status }) => {
                     let temp = [];
                     if (status == 200) {
@@ -84,14 +75,14 @@ export default function useApiMangaList() {
                                 offset: data.offset,
                                 total: data.total,
                             },
-                            loading:false,
+                            loading: false,
                         });
                     }
                 }).catch(() => {
-                    setState({...state, err: "Something went wrong", loading:false });
+                    setState({ ...state, err: "Something went wrong", loading: false });
                 });
         }
-        mountRef.current = true;
+        else mountRef.current = true;
     }, [params]);
 
     return [state, setParams];

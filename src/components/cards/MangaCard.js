@@ -15,7 +15,6 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
         })))   
         return au.map(item => item.name).join(', ');
     };
-
     return (
         <div className="flex gap-5 shadowbox rounded-xl overflow-hidden">
             <div className="basis-1/3 flex-shrink-0 max-w-[150px] min-h-[237px] h-full">
@@ -51,7 +50,7 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
 
                 </div>
 
-                <div className={`flex text-sm gap-x-5 mt-1 ${average!==undefined && follows!=undefined? "" : "bg-grey animate-pulse h-6 w-28"}`}>
+                <div className={`flex text-sm gap-x-5 mt-1 ${(average!==undefined && follows!==undefined)? "" : "bg-grey animate-pulse h-6 w-28"}`}>
                     <div className="flex items-center">
                         {
                             average!==undefined &&

@@ -21,6 +21,7 @@ export default function ChapterList({ list }) {
             else setMode(chapterListMode);
         }
     }, []);
+
     return (
         <div className="flex flex-col gap-3">
             <div className="bg-grey rounded-xl flex w-fit leading-[0] self-end">

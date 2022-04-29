@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 
@@ -8,7 +8,7 @@ import { MangaList } from "../../src/components/cards";
 import Image from "next/image";
 import Pagination from "../../src/components/Pagination";
 import BackNavigation from "../../src/components/BackNavigation";
-
+import Loading from "../../src/components/Loading";
 
 import useApiMangaList from "../../src/hooks/useApiMangaList";
 import useApiTagList from "../../src/hooks/useApiTagList";
@@ -268,11 +268,15 @@ export default function TitlePage({ query }) {
         if (!statisticApi.loading && statisticApi.result)
             setMangaList(mangaList.map(item => {
                 try {
-                    item.follows = statisticApi.result.data[item.id].follows;
-                } catch { }
+                    item.follows = statisticApi.result.data[item.id].follows || null;
+                } catch { 
+                    item.follows = null;
+                }
                 try {
-                    item.average = statisticApi.result.data[item.id].average;
-                } catch { }
+                    item.average = statisticApi.result.data[item.id].average || null;
+                } catch {
+                    item.average = null;
+                }
                 return item;
             }));
     }, [statisticApi]);
@@ -365,9 +369,7 @@ export default function TitlePage({ query }) {
             }
             {
                 mangaApi.loading &&
-                <div className="text-center">
-                    <Image src="/images/loading.svg" alt="loading" width={35} height={35}></Image>
-                </div>
+                <Loading></Loading>
             }
             {
                 mangaApi.result && !mangaApi.loading &&

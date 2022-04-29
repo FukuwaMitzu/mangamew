@@ -1,7 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
+import React from "react";
 
-const richFormat = ({ id, title, cover, date, type }) => {
+const richFormat = ({ id, title, date, cover}) => {
     return (
         <div className="group flex gap-3 w-full">
             <div className="relative w-1/3 max-w-[180px] h-[120px] bg-grey overflow-hidden rounded-xl">
@@ -14,7 +15,7 @@ const richFormat = ({ id, title, cover, date, type }) => {
         </div>
     );
 };
-const simpleFormat = ({ id, title, cover, date, type })=>{
+const simpleFormat = ({ id, title, date})=>{
     return (
         <div className="group flex p-1 w-full bg-grey">
                 <h3 className="group-hover:text-primary transition-colors font-bold flex-1">{title}</h3>
@@ -22,12 +23,25 @@ const simpleFormat = ({ id, title, cover, date, type })=>{
         </div>
     );
 }
-export default function ChapterCard(props) {
+
+
+function ChapterCard(props) {
+    const date = new Date(props.publishAt);
+    let chapterFormat = {...props};
+
+    chapterFormat.date = date.toLocaleDateString('en-US');
+
+    let chapterTitle = "Oneshot"; 
+    if(chapterFormat.chapter) chapterTitle = `Chapter ${chapterFormat.chapter}${chapterFormat.title? ": " + chapterFormat.title : ""}`;
+    chapterFormat.title = chapterTitle;
+
     return (
-        <Link href={`/chapter/${props.id}`}>
+        <Link href={`/chapter/${chapterFormat.id}`}>
             <a>
-                {props.type=="simple"?simpleFormat(props) : richFormat(props)}
+                {chapterFormat.type=="simple"?simpleFormat(chapterFormat) : richFormat(chapterFormat)}
             </a>
         </Link>
     )
 }
+
+export default React.memo(ChapterCard);

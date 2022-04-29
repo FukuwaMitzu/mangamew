@@ -1,118 +1,102 @@
 import Image from "next/image";
 import TagGroup from "../../src/components/TagGroup";
 import Button from "../../src/components/Button";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useRef } from "react";
 import Section from "../../src/components/Section";
 import Head from "next/head";
-import { ChapterList } from "../../src/components/cards";
+import { ChapterList, MangaList } from "../../src/components/cards";
 import axios from "axios";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { formatAltTitles, formatAverage, formatDesciption, formatScore, formatTitle } from "../../src/utilities";
 import Link from "next/link";
-
+import useApiStatisticList from "../../src/hooks/useApiStatisticList";
+import useApiMangaFeed from "../../src/hooks/useApiMangaFeed";
 import { MangaMewAPIURL, MangaMewURL } from "../../src/config";
-
-
+import Loading from "../../src/components/Loading";
 
 
 const customComponents = {
-    a: ({ children, href }) => <a className="text-primary" href={href}>{children}</a>,
+    a: ({ children, href }) => <a className="text-primary" target="__blank__" href={href}>{children}</a>,
     li: ({ ordered, children }) => <li className={`${ordered ? "list-decimal" : "list-disc"} ml-10 my-2`}>{children}</li>,
     ol: ({ children }) => <ol className="pt-2">{children}</ol>,
     ul: ({ children }) => <ul className="pt-2">{children}</ul>,
-    p: ({children})=> <div className="mb-3">{children}</div>,
-    img: ({src})=> <img className="inline-block" src={src}></img>,
-    br: ({})=> <div className="my-1"></div>,
-    hr: ({})=> <hr className="my-2 border-t-grey"></hr>
+    p: ({ children }) => <div className="mb-3">{children}</div>,
+    img: ({ src }) => <img className="inline-block" src={src}></img>,
+    br: ({ }) => <div className="my-1"></div>,
+    hr: ({ }) => <hr className="my-2 border-t-grey"></hr>
 }
-
-const chapterList = [
-    {
-        id: 1,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 2,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 3,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 4,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 5,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 6,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 7,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 8,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 9,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 10,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 11,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-    {
-        id: 12,
-        title: "Chapter 1: When...",
-        cover: "/images/exam1.jpg",
-        date: "26/03/1995"
-    },
-]
 
 export default function MangaPage({ id, title, altTitle, tags, authors, artists, cover, description }) {
     const [average, setAverage] = useState();
     const [follows, setFollows] = useState();
+    const [chapterList, setChapterList] = useState([]);
+
+    const [statisticApi, setStatisticApiParams] = useApiStatisticList();
+
+    const [feedIndex, setFeedIndex] = useState({ offset: 0, limit: 100, total: 0 });
+    const [feedApi, setFeedApiParams] = useApiMangaFeed();
+
+    const chapterContainerRef = useRef();
+    const fetchLockRef = useRef(true);
 
     useEffect(() => {
-        axios.get(MangaMewAPIURL(`/statistics/manga/${id}`)).then(
-            ({ data }) => {
-                setAverage(data.statistics[id].rating.average);
-                setFollows(data.statistics[id].follows);
-            }
-        ).catch(() => { });
+        setStatisticApiParams({
+            manga: [id]
+        });
+        setFeedApiParams({ id: id });
     }, []);
+
+    useEffect(() => {
+        if (!feedApi.loading && feedApi.result) {
+            setChapterList(
+                chapterList.concat(
+                    feedApi.result.data.filter(
+                        item => !chapterList.some(a => a.id == item.id)
+                    )
+                )
+            );
+
+            let nextLimit = Math.min(feedApi.result.limit, Math.abs(feedApi.result.total - feedApi.result.offset - feedApi.result.limit));
+            let nextOffset = feedIndex.offset + feedApi.result.limit;
+            setFeedIndex({offset: nextOffset, limit: nextLimit, total: feedApi.result.total });
+            fetchLockRef.current = false;
+        }
+    }, [feedApi]);
+
+
+    useEffect(() => {
+        const fetchOnScroll = () => {
+            if (chapterContainerRef.current && feedApi.result && !feedApi.loading) {
+                if (chapterContainerRef.current.getBoundingClientRect().y + chapterContainerRef.current.scrollHeight < window.innerHeight) {
+                    let checkLimit = feedIndex.limit > 0;
+                    let checkLock = fetchLockRef.current;
+                    let checkOffset = feedIndex.offset + feedIndex.limit <= feedIndex.total;
+                    
+                    if (!checkOffset || checkLock || !checkLimit)return;
+                    setFeedApiParams({ id: id, offset: feedIndex.offset, limit: feedIndex.limit});
+                    fetchLockRef.current = true;
+                };     
+            } 
+        }
+        window.addEventListener('scroll', fetchOnScroll);
+        return () => {
+            window.removeEventListener('scroll', fetchOnScroll);
+        }
+    }, [chapterList]);
+
+
+    useEffect(() => {
+        if (statisticApi.result && !statisticApi.loading) {
+            try {
+                setAverage(statisticApi.result.data[id].average);
+            } catch {
+                setAverage(null);
+            }
+            try { setFollows(statisticApi.result.data[id].follows); } catch {
+                setFollows(null);
+            }
+        }
+    }, [statisticApi]);
 
 
     const uniqueAuthor = (au, ar) => {
@@ -121,7 +105,6 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
         })))
         return au;
     };
-
 
     return (
         <Fragment>
@@ -178,7 +161,14 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
             <div className="flex lg:mt-10 py-10 gap-5 justify-between flex-col lg:flex-row bg-dominant">
                 <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey">
                     <Section title="Description">
-                        <div className="text-sm"><ReactMarkdown components={customComponents}>{description}</ReactMarkdown></div>
+                        <div className="text-sm">
+                            {
+                                description.trim() != "" ?
+                                    <ReactMarkdown components={customComponents}>{description}</ReactMarkdown>
+                                    :
+                                    "This manga has no description yet"
+                            }
+                        </div>
                     </Section>
                     <div className="mt-10">
                         <Section title="Creators">
@@ -218,7 +208,14 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                     </div>
                 </div>
                 <div className="flex-1">
-                    <ChapterList list={chapterList} />
+                    {
+                        chapterList.length > 0 &&
+                        <div ref={chapterContainerRef}><ChapterList list={chapterList} /></div>
+                    }
+                    {
+                        feedApi.loading &&
+                        <Loading></Loading>
+                    }
                 </div>
             </div>
         </Fragment>

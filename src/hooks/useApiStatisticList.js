@@ -50,7 +50,7 @@ export default function useApiStatisticList() {
                 setState({...state, err: props, loading:false });
             })
         } 
-        mountRef.current = true;
+        else mountRef.current = true;
     }, [params]);
 
 
