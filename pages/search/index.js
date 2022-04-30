@@ -1,12 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 
 
 import { useRouter } from "next/router";
-import { MangaList } from "../../src/components/cards";
-import Image from "next/image";
-import Pagination from "../../src/components/Pagination";
+const MangaList = dynamic(()=> import("../../src/components/cards/MangaList"));
+const Pagination = dynamic(()=> import("../../src/components/Pagination"));
+
 import BackNavigation from "../../src/components/BackNavigation";
 import Loading from "../../src/components/Loading";
 
@@ -14,6 +15,7 @@ import useApiMangaList from "../../src/hooks/useApiMangaList";
 import useApiTagList from "../../src/hooks/useApiTagList";
 import useApiStatisticList from "../../src/hooks/useApiStatisticList";
 import usePageIndex from "../../src/hooks/usePageIndex";
+
 /**
  * 
  * include
@@ -358,7 +360,7 @@ export default function TitlePage({ query }) {
             <Head>
                 <title>Advanced Search</title>
             </Head>
-            <div className="mb-16">
+            <div className="my-16">
                 <BackNavigation href={"/"} title={"Advanced Search"}></BackNavigation>
             </div>
             {

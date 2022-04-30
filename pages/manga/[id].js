@@ -1,12 +1,14 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import TagGroup from "../../src/components/TagGroup";
 import Button from "../../src/components/Button";
 import { Fragment, useEffect, useState, useRef } from "react";
 import Section from "../../src/components/Section";
 import Head from "next/head";
-import { ChapterList, MangaList } from "../../src/components/cards";
+
+
+
 import axios from "axios";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { formatAltTitles, formatAverage, formatDesciption, formatScore, formatTitle } from "../../src/utilities";
 import Link from "next/link";
 import useApiStatisticList from "../../src/hooks/useApiStatisticList";
@@ -14,6 +16,9 @@ import useApiMangaFeed from "../../src/hooks/useApiMangaFeed";
 import { MangaMewAPIURL, MangaMewURL } from "../../src/config";
 import Loading from "../../src/components/Loading";
 
+
+const ChapterList = dynamic(()=> import("../../src/components/cards/ChapterList"));
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 const customComponents = {
     a: ({ children, href }) => <a className="text-primary" target="__blank__" href={href}>{children}</a>,
@@ -122,7 +127,7 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
             <div className="relative min-w-0 w-full sm:p-5">
                 <div className="hidden sm:block bg-fixed bg-cover inset-0 absolute opacity-10 h-full w-full" style={{ backgroundImage: `url(https://uploads.mangadex.org/covers/${id}/${cover})` }}>
                 </div>
-                <div className="flex flex-col gap-x-12 gap-y-3 md:flex-row max-w-[1080px] m-auto relative">
+                <div className="flex flex-col gap-x-12 gap-y-3 md:flex-row max-w-5xl m-auto relative">
                     <div className="relative w-full md:w-[225px] h-[200px] md:h-[350px] flex-shrink-0 rounded-xl overflow-hidden shadowbox">
                         <div className="w-full h-full bg-grey animate-pulse"></div>
                         <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} alt={title} className="object-cover" quality={100} priority></Image>
@@ -158,8 +163,8 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                     </div>
                 </div>
             </div>
-            <div className="flex lg:mt-10 py-10 gap-5 justify-between flex-col lg:flex-row bg-dominant">
-                <div className="w-full lg:max-w-[450px] lg:sticky lg:top-20 lg:h-fit lg:border-r-grey">
+            <div className="lg:mt-10 py-10 gap-5 grid md:grid-cols-10 bg-dominant">
+                <div className="w-full lg:sticky lg:top-20 lg:h-fit lg:border-r-grey md:col-span-4">
                     <Section title="Description">
                         <div className="text-sm">
                             {
@@ -207,7 +212,7 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                         </Section>
                     </div>
                 </div>
-                <div className="flex-1">
+                <div className="md:col-span-6">
                     {
                         chapterList.length > 0 &&
                         <div ref={chapterContainerRef}><ChapterList list={chapterList} /></div>
