@@ -52,6 +52,7 @@ export default function useApiMangaList() {
                             manga.cover = "/";
                             manga.id = item.id;
                             manga.status = item.attributes.status;
+                            manga.year = item.attributes.year;
                             manga.title = item.attributes.title.en || item.attributes.title[Object.keys(item.attributes.title)[0]];
                             manga.tags = item.attributes.tags.map((tag) => {
                                 return {

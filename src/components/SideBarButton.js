@@ -26,7 +26,7 @@ export default function SideBarButton({ href, children }) {
     return (
         <Link href={href || "/"}>
             <a onClick={triggerSideBar}>
-                <button className={`transition-colors w-full text-left p-2 rounded-xl ${ClassActive(state.isActive)}`}>
+                <button className={`transition-colors w-full text-left p-2 rounded-md ${ClassActive(state.isActive)}`}>
                     {children}
                 </button>
             </a>

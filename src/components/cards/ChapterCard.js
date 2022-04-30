@@ -4,7 +4,7 @@ import React from "react";
 
 const simpleFormat = ({ id, title, date})=>{
     return (
-        <div className="group flex p-1 w-full bg-grey">
+        <div className="group flex py-1 w-full bg-grey px-2">
                 <h3 className="group-hover:text-primary transition-colors font-bold flex-1">{title}</h3>
                 <p className="flex items-center flex-shrink-0 flex-grow-0 self-end text-sm"><span className="material-icons-outlined !text-base mr-1">schedule</span>{date}</p>
         </div>
@@ -28,7 +28,7 @@ function ChapterCard(props) {
     chapterFormat.title = chapterTitle;
     return (
         <Link href={`/chapter/${chapterFormat.id}`}>
-            <a>
+            <a title={chapterFormat.title}>
                 {simpleFormat(chapterFormat)}
             </a>
         </Link>

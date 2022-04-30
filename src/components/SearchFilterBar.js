@@ -140,14 +140,14 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
         <Fragment>
             <div className={`fixed w-full h-full inset-0 z-50 ${filterWindowMode ? "" : "hidden"} flex justify-center items-center`}>
                 <div className={`shade absolute inset-0 w-full h-full ${filterWindowMode ? "animate-fade-in" : ""}`} onClick={triggerFilterWindow}></div>
-                <div className={`${filterWindowMode ? "animate-jump-in" : ""} bg-dominant w-full max-w-[1280px] max-h-full sm:max-h-[calc(100%_-_2rem)] p-10 sm:m-5 overflow-auto overscroll-contain flex flex-col rounded-xl`}>
+                <div className={`${filterWindowMode ? "animate-jump-in" : ""} bg-dominant w-full max-w-[1280px] max-h-full sm:max-h-[calc(100%_-_2rem)] p-10 sm:m-5 overflow-auto overscroll-contain flex flex-col rounded-md`}>
                     <div className="flex justify-between">
                         <h1 className="font-bold text-3xl">Filters</h1>
                         <button onClick={triggerFilterWindow}><span className="material-icons-outlined">close</span></button>
                     </div>
                     <div className="flex mt-3">
-                        <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-xl text-dominant font-bold p-3 active:bg-primary-dark transition-colors">Search</button>
-                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-xl transition-colors">Reset filters</button>
+                        <button onClick={triggerFilterWindow} className="flex-1 bg-primary rounded-md text-dominant font-bold p-3 active:bg-primary-dark transition-colors">Search</button>
+                        <button onClick={resetFilter} className="font-bold p-3 w-2/5 active:bg-grey rounded-md transition-colors">Reset filters</button>
                     </div>
                     <div className="flex flex-wrap gap-5 mt-10 mb-5">
                         <div>
@@ -204,7 +204,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
                     }
                 </div>
             </div>
-            <div className="bg-grey flex rounded-xl pl-2 items-center">
+            <div className="bg-grey flex rounded-md pl-2 items-center">
                 <span className="material-icons-outlined mr-3">search</span>
                 <form className="flex-1" onSubmit={(e) => { e.preventDefault(); }}>
                     <input className="bg-transparent outline-none w-full" type="text" placeholder="Search" ref={searchTitleRef} onChange={(e) => { setSearchTitle(e.target.value) }} value={searchTitle}></input>
@@ -213,7 +213,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
                     searchTitle != "" &&
                     <button onClick={resetSearch} className="leading-[0] px-2"><span className="material-icons-outlined">close</span></button>
                 }
-                <button onClick={triggerFilterWindow} className="bg-primary text-dominant rounded-xl flex items-center py-2 px-3 active:bg-primary-dark transition-all">
+                <button onClick={triggerFilterWindow} className="bg-primary text-dominant rounded-md flex items-center py-2 px-3 active:bg-primary-dark transition-all">
                     <span className="material-icons-outlined">filter_alt</span>
                     <span className="ml-1 hidden sm:block">Add filter</span>
                 </button>

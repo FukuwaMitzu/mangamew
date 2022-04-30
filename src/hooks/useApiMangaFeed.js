@@ -12,6 +12,12 @@ const initParams ={
     order: { chapter: 'desc' }
 }
 
+
+
+/**
+ * @link https://api.mangadex.org/swagger.html#/Manga/get-manga-id-feed
+ *  
+ */
 export default function useApiMangaFeed() {
     const mountRef = useRef(false);
     const [params, setParams] = useState(initParams);

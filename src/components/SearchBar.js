@@ -1,4 +1,4 @@
-export default function SearchBar({size}){
+export default function SearchBar(){
     return (
         <div className="bg-grey flex rounded-xl px-2 py-1 items-center">
             <span className="material-icons-outlined mr-3">search</span>

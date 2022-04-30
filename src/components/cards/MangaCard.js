@@ -16,13 +16,13 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
         return au.map(item => item.name).join(', ');
     };
     return (
-        <div className="flex gap-5 shadowbox rounded-xl overflow-hidden">
+        <div className="flex gap-5 shadowbox rounded-md overflow-hidden">
             <div className="basis-1/3 flex-shrink-0 max-w-[150px] min-h-[237px] h-full">
                 <Link href={`/manga/${id}`}>
                     <a>
                         <div className="relative w-full h-full">
                             <div className="bg-grey animate-pulse w-full h-full absolute inset-0"></div>
-                            <Image src={`https://uploads.mangadex.org/covers/${id}/${cover}.256.jpg`} layout="fill" className="object-center object-cover" title={title} alt={title}></Image>
+                            <Image src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} layout="fill" className="object-center object-cover" title={title} alt={title}></Image>
                         </div>
                     </a>
                 </Link>
