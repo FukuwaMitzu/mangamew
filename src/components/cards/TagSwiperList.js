@@ -1,4 +1,4 @@
-import {Swiper, SwiperSlide} from "swiper/react"
+import {Swiper, SwiperSlide} from "swiper/react";
 import TagCard from "./TagCard"
 
 import "swiper/css"
@@ -12,7 +12,7 @@ export default function TagwiperList({list}){
             {
                 list.map((item)=>{
                     return (
-                        <SwiperSlide key={item.id} style={{width:"80%", maxWidth:300, paddingRight:20}}>
+                        <SwiperSlide key={item.id} style={{width:"85%", maxWidth:300, paddingRight:20}}>
                             <TagCard {...item}/>
                         </SwiperSlide>
                     )

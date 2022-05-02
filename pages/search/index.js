@@ -1,13 +1,14 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import SearchFilterBar from "../../src/components/SearchFilterBar"
 
 
 import { useRouter } from "next/router";
-const MangaList = dynamic(()=> import("../../src/components/cards/MangaList"));
-const Pagination = dynamic(()=> import("../../src/components/Pagination"));
+const MangaList = dynamic(() => import("../../src/components/cards/MangaList"));
+const Pagination = dynamic(() => import("../../src/components/Pagination"));
 
+import SelectBox from "../../src/components/SelectBox";
 import BackNavigation from "../../src/components/BackNavigation";
 import Loading from "../../src/components/Loading";
 
@@ -15,6 +16,53 @@ import useApiMangaList from "../../src/hooks/useApiMangaList";
 import useApiTagList from "../../src/hooks/useApiTagList";
 import useApiStatisticList from "../../src/hooks/useApiStatisticList";
 import usePageIndex from "../../src/hooks/usePageIndex";
+
+
+const orderList = [
+    {
+        value: {
+            relevance: "desc",
+        },
+        toString: () => "Best Match"
+    },
+    {
+        value: {
+            latestUploadedChapter: "desc",
+        },
+        toString: () => "Latest Upload"
+    },
+    {
+        value: {
+            latestUploadedChapter: "asc",
+        },
+        toString: () => "Oldest Upload"
+    },
+    {
+        value: {
+            followedCount: "desc",
+        },
+        toString: () => "Most Follows"
+    },
+    {
+        value: {
+            followedCount: "asc",
+        },
+        toString: () => "Fewest Follows"
+    },
+    {
+        value: {
+            year: "asc",
+        },
+        toString: () => "Year Ascending"
+    },
+    {
+        value: {
+            year: "desc",
+        },
+        toString: () => "Year Descending"
+    },
+    
+]
 
 /**
  * 
@@ -32,7 +80,7 @@ export default function TitlePage({ query }) {
     const [tagApi, setTagApiParams] = useApiTagList();
     const [statisticApi, setStasisticParams] = useApiStatisticList();
     const [page, setPage] = usePageIndex(query.page);
-
+    const [order, setOrder] = useState(orderList[0]);
 
 
 
@@ -112,9 +160,6 @@ export default function TitlePage({ query }) {
     const [searchTitle, setSearchTitle] = useState("");
     const [mangaList, setMangaList] = useState([]);
 
-
-
-
     //Init tags
     useEffect(() => {
         let include = [];
@@ -130,67 +175,28 @@ export default function TitlePage({ query }) {
         setTagApiParams({ include: include, exclude: exclude });
     }, [query]);
 
-    //Init demograp, raiting,...
-    useEffect(() => {
-        if (query.demos) {
-            let qDemo = query.demos.split(',');
-            setDemoGraphic(
-                demographic.map((data) => {
-                    if (qDemo.some((item) => item == data.name)) data.mode = 1;
-                    return data;
-                }
-                )
-            );
-
-        }
-
-        if (query.content) {
-            let qContent = query.content.split(',');
-            setContentRaiting(
-                contentRating.map((data) => {
-                    if (qContent.some((item) => item == data.name)) data.mode = 1;
-                    return data;
-                }
-                )
-            );
-        }
-        if (query.statuses) {
-            let qStatus = query.statuses.split(',');
-            setPublickStatus(
-                publicStatus.map((data) => {
-                    if (qStatus.some((item) => item == data.name)) data.mode = 1;
-                    return data;
-                }
-                )
-            );
-        }
-    }, [query]);
-
-
-
     //Update state when router query changed
     useEffect(() => {
-        if (tagList.length == 0) return;
-        const query = router.query;
+        const rQuery = router.query;
         let include = [];
         let exclude = [];
         let demos = [];
         let statuses = [];
         let content = [];
         try {
-            include = query.include.split(',');
+            include = rQuery.include.split(',');
         } catch { }
         try {
-            exclude = query.exclude.split(',');
+            exclude = rQuery.exclude.split(',');
         } catch { }
         try {
-            demos = query.demos.split(',');
+            demos = rQuery.demos.split(',');
         } catch { }
         try {
-            statuses = query.statuses.split(',');
+            statuses = rQuery.statuses.split(',');
         } catch { }
         try {
-            content = query.content.split(',');
+            content = rQuery.content.split(',');
         } catch { }
 
         let list = tagList.map((item) => {
@@ -209,7 +215,6 @@ export default function TitlePage({ query }) {
                 mode: mode
             };
         });
-
         setDemoGraphic(demographic.map(item => {
             if (demos.some((demo) => demo == item.name)) item.mode = 1;
             else item.mode = 0;
@@ -228,11 +233,31 @@ export default function TitlePage({ query }) {
 
         setTagList(list.sort((a, b) => a.name.localeCompare(b.name)));
     }, [router]);
+
     useEffect(() => {
-        if (router.isReady && router.query.title != undefined)
-            setSearchTitle(router.query.title);
+        try{
+            
+            let title = router.query.title;
+            if(title!==undefined)setSearchTitle(title);
+        }catch{}
     }, [router]);
 
+    useEffect(() => {
+        try {
+            if(router.query.order){
+                let qOrder = router.query.order;
+                qOrder = qOrder.split('.');
+                if (qOrder.length == 2) {
+                    orderList.forEach(item => {
+                        try {
+                            if (item.value[qOrder[0]] == qOrder[1])
+                                setOrder(item);
+                        } catch { }
+                    });
+                }
+            }
+        } catch { }
+    }, [router]);
 
 
 
@@ -252,7 +277,8 @@ export default function TitlePage({ query }) {
                 status: publicStatus.filter((item) => item.mode == 1).map((item) => item.name),
                 title: searchTitle,
                 limit: Math.min(page.limit, 10000 - page.offset),
-                offset: page.offset
+                offset: page.offset,
+                order: order.value
             });
         }
     }, [tagList, searchTitle, demographic, publicStatus, contentRating]);
@@ -271,7 +297,7 @@ export default function TitlePage({ query }) {
             setMangaList(mangaList.map(item => {
                 try {
                     item.follows = statisticApi.result.data[item.id].follows || null;
-                } catch { 
+                } catch {
                     item.follows = null;
                 }
                 try {
@@ -328,13 +354,14 @@ export default function TitlePage({ query }) {
         if (confirmFilterChanged)
             router.push({
                 pathname: router.pathname,
-                query: {
+                query: {                   
                     ...searchQuery,
                     title: searchTitle,
                     page: 1,
                     demos: demos.filter((a) => a.mode == 1).map((a) => a.name).join(','),
                     content: content.filter((a) => a.mode == 1).map((a) => a.name).join(','),
-                    statuses: statuses.filter((a) => a.mode == 1).map((a) => a.name).join(',')
+                    statuses: statuses.filter((a) => a.mode == 1).map((a) => a.name).join(','),
+                    order:router.query.order,
                 },
             }, undefined, { shallow: true });
     };
@@ -353,21 +380,33 @@ export default function TitlePage({ query }) {
             query: { ...router.query, page: e + 1 },
         }, undefined, { shallow: true, scroll: true });
     };
-
- 
+    const updateOrder = (e) => {
+        let iOrder = Object.keys(e.value)[0];
+        router.push({
+            pathname: router.pathname,
+            query: { ...router.query, order: iOrder + "." + e.value[iOrder], page: 1 },
+        }, undefined, { shallow: true});
+    }
     return (
         <Fragment>
             <Head>
                 <title>Advanced Search</title>
             </Head>
-            <div className="my-16">
+            <div className="my-10">
                 <BackNavigation href={"/"} title={"Advanced Search"}></BackNavigation>
             </div>
             {
                 tagList.length > 0 &&
-                <div className="mb-8">
-                    <SearchFilterBar filterList={tagList} publicStatusList={publicStatus} contentRatingList={contentRating} demographicList={demographic} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
-                </div>
+                <Fragment>
+                    <div className="mb-8">
+                        <SearchFilterBar filterList={tagList} publicStatusList={publicStatus} contentRatingList={contentRating} demographicList={demographic} onUpdateFilter={updateFilter} onSearch={updateSearch} title={searchTitle}></SearchFilterBar>
+                    </div>
+                    <div className="flex justify-between flex-wrap gap-3 mb-5">
+                        <div className="min-w-0 w-full max-w-xs">
+                            <SelectBox list={orderList} select={order} label={"Sort By"} onSelectedChange={updateOrder}></SelectBox>
+                        </div>
+                    </div>
+                </Fragment>
             }
             {
                 mangaApi.loading &&
@@ -376,9 +415,6 @@ export default function TitlePage({ query }) {
             {
                 mangaApi.result && !mangaApi.loading &&
                 <Fragment>
-                    <p className="font-bold mb-5">
-                        Found <span className="text-primary italic">{page.total}</span> results
-                    </p>
                     <MangaList list={mangaApi.result.data}></MangaList>
                     <div className="mx-auto w-fit mt-10">
                         <Pagination limit={page.limit} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>

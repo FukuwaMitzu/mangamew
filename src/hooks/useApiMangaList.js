@@ -2,9 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { MangaMewAPIURL } from "../config";
 import qs from "qs";
+import { formatDesciption } from "../utilities";
 
 
 const initParams = {
+    ids: [],
     includedTags: [],
     excludedTags: [],
     publicationDemographic: [],
@@ -40,13 +42,14 @@ export default function useApiMangaList() {
                         ...params
                     },
                     paramsSerializer: e=>{
-                        return qs.stringify(e);
+                        return qs.stringify(e, {indices:false, arrayFormat:"brackets"});
                     }
                 }).then(({ data, status }) => {
                     let temp = [];
                     if (status == 200) {
                         temp = data.data.map((item) => {
                             let manga = {};
+                            
                             manga.authors = [];
                             manga.artists = [];
                             manga.cover = "/";
@@ -54,6 +57,7 @@ export default function useApiMangaList() {
                             manga.status = item.attributes.status;
                             manga.year = item.attributes.year;
                             manga.title = item.attributes.title.en || item.attributes.title[Object.keys(item.attributes.title)[0]];
+                            manga.description = formatDesciption(item.attributes.description);
                             manga.tags = item.attributes.tags.map((tag) => {
                                 return {
                                     id: tag.id,

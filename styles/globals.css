@@ -11,18 +11,28 @@ body {
   @apply text-secondary;
 }
 
-.shadowbox-sm {
-  @apply shadow-md shadow-gray-300;
-}
 
-.shadowbox {
-  box-shadow: 0 .25rem 1.875rem rgba(0, 0, 0, 0.1);
-}
+@layer components{
+  .list-pagination{
+    @apply w-[8px] h-[8px] rounded-full bg-grey-dark mx-1 inline-block cursor-pointer;
+  }
+  .list-pagination-active{
+    @apply bg-primary;
+  }
+  
+  .shadowbox-sm {
+    @apply shadow-md shadow-gray-300;
+  }
 
-.shade {
-  @apply backdrop-blur-sm bg-secondary bg-opacity-30;
-}
+  .shadowbox {
+    box-shadow: 0 .25rem 1.875rem rgba(0, 0, 0, 0.1);
+  }
 
+  .shade {
+    @apply backdrop-blur-sm bg-secondary bg-opacity-30;
+  }
+
+}
 a {
   color: inherit;
   text-decoration: none;

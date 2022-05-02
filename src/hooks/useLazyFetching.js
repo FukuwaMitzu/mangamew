@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 
 /**
@@ -21,11 +21,17 @@ import { useEffect, useRef, useState } from "react";
  * err,
  * 
  * @returns containerRef - một ref của phần tử DOM chứa toàn bộ danh sách mà sử dụng apiHook 
+ * @returns setRefresh - nạp lại dữ liệu từ đầu, hàm này có thể nhận tham số là một callback sẽ thực thi khi được làm mới
  */
 export default function useLazyFetching(state, onFetching){
     const [feedIndex, setFeedIndex] = useState({ offset: 0, limit: 0, total: 0 });
     const fetchLockRef = useRef(true);
     const containerRef = useRef({});
+
+    const setRefresh = useCallback((callback)=>{
+        setFeedIndex({offset: 0, limit: 0, total: 0});
+        if(callback) callback();
+    }, [feedIndex]);
 
     useEffect(()=>{
         if(state.result && !state.loading){
@@ -43,7 +49,7 @@ export default function useLazyFetching(state, onFetching){
 
         const fetchOnScroll = () => {
             if (containerRef.current && state.result && !state.loading) {
-                if (containerRef.current.getBoundingClientRect().y + containerRef.current.scrollHeight < window.innerHeight) {
+                if (containerRef.current.getBoundingClientRect().y + containerRef.current.scrollHeight < window.innerHeight *1.5) {
                     if(checkLock() || !checkLimit() || !checkOffset() ) return;
                     fetchLockRef.current = true;
                     if(onFetching)onFetching({offset: feedIndex.offset, limit: feedIndex.limit});
@@ -60,5 +66,5 @@ export default function useLazyFetching(state, onFetching){
     }, [feedIndex]);
 
 
-    return [containerRef];
+    return [containerRef, setRefresh];
 }

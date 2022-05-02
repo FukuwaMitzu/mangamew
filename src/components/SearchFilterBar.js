@@ -1,8 +1,8 @@
-import { Fragment, useCallback, useEffect, useRef} from "react";
-import { useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState, memo } from "react";
 import FilterItem from "./FilterItem";
 
-export default function SearchFilterBar({ title, filterList, demographicList, contentRatingList, publicStatusList, onUpdateFilter, onSearch }) {
+
+function SearchFilterBar({ title, filterList, demographicList, contentRatingList, publicStatusList, onUpdateFilter, onSearch }) {
     const [searchTitle, setSearchTitle] = useState("");
 
     const [demographic, setDemoGraphic] = useState([]);
@@ -13,7 +13,6 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
     const [filterWindowMode, setfilterWindowMode] = useState(false);
 
     const searchTitleRef = useRef();
-
 
     useEffect(() => {
         let newList = demographicList.map((item) => {
@@ -39,7 +38,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
 
     //Update title realtime
     useEffect(() => {
-        if(searchTitleRef.current !== document.activeElement)setSearchTitle(title);
+        if (searchTitleRef.current !== document.activeElement) setSearchTitle(title);
     }, [title]);
 
     //Update filterList realtime
@@ -72,14 +71,16 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
 
         if (onUpdateFilter) onUpdateFilter([].concat(...groupList.map((item) => item[1])), demographic, publicStatus, contentRating);
     }
-
-    const onFilter = useCallback((e) => {
+    
+    const onFilter = (e) => {
         let newList = groupList.map((item) => {
-            for (var a in item[1]) if (item[1][a].id == e.id) item[1][a].mode = e.mode;
+            for (var a in item[1]) if (item[1][a].id == e.id){ 
+                item[1][a].mode = e.mode;
+            }
             return item;
         });
         setGroupList(newList);
-    }, [groupList]);
+    };
 
     const onDemo = useCallback((e) => {
         let newList = demographic.map((item) => {
@@ -134,7 +135,7 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
         return () => {
             clearTimeout(delayDebounceFn);
         }
-    }, [searchTitle, onSearch]);
+    }, [searchTitle]);
 
     return (
         <Fragment>
@@ -257,3 +258,36 @@ export default function SearchFilterBar({ title, filterList, demographicList, co
         </Fragment>
     )
 }
+
+
+
+export default memo(SearchFilterBar, (pre, props) => {
+    if (pre.title !== props.title) return false;
+    for (let i = 0; i < pre.filterList.length; i++) {
+        if (pre.filterList[i].id !== props.filterList[i].id ||
+            pre.filterList[i].mode !== props.filterList[i].mode ||
+            pre.filterList[i].group !== props.filterList[i].group
+        ) return false;
+    }
+    for (let i = 0; i < pre.demographicList.length; i++) {
+        if (pre.demographicList[i].id !== props.demographicList[i].id ||
+            pre.demographicList[i].mode !== props.demographicList[i].mode ||
+            pre.demographicList[i].group !== props.demographicList[i].group
+        ) return false;
+    }
+    for (let i = 0; i < pre.publicStatusList.length; i++) {
+        if (pre.publicStatusList[i].id !== props.publicStatusList[i].id ||
+            pre.publicStatusList[i].mode !== props.publicStatusList[i].mode ||
+            pre.publicStatusList[i].group !== props.publicStatusList[i].group
+        ) return false;
+    }
+    for (let i = 0; i < pre.contentRatingList.length; i++) {
+        if (pre.contentRatingList[i].id !== props.contentRatingList[i].id ||
+            pre.contentRatingList[i].mode !== props.contentRatingList[i].mode ||
+            pre.contentRatingList[i].group !== props.contentRatingList[i].group
+        ) return false;
+    }
+    if(pre.onUpdateFilter!== props.onUpdateFilter) return false;
+    if(pre.onSearch !== props.onSearch) return false;
+    return true;
+});

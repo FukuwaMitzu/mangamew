@@ -1,8 +1,8 @@
 import Link from "next/link"
-import React from "react";
+import {memo} from "react";
 
 
-const simpleFormat = ({ id, title, date})=>{
+const simpleFormat = ({title, date})=>{
     return (
         <div className="group flex py-1 w-full bg-grey px-2">
                 <h3 className="group-hover:text-primary transition-colors font-bold flex-1">{title}</h3>
@@ -35,4 +35,6 @@ function ChapterCard(props) {
     )
 }
 
-export default React.memo(ChapterCard);
+export default memo(ChapterCard, (pre, props)=>{
+    return pre.id === props.id;
+});

@@ -6,24 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@fontsource/material-icons-outlined": "^4.5.4",
     "@fontsource/poppins": "^4.5.5",
+    "@next/bundle-analyzer": "^12.1.5",
     "@reduxjs/toolkit": "^1.8.1",
     "@tailwindcss/line-clamp": "^0.3.1",
     "axios": "^0.26.1",
-    "next": "12.1.5",
+    "cross-env": "^7.0.3",
+    "next": "^12.1.5",
     "next-redux-wrapper": "^7.0.5",
     "qs": "^6.10.3",
-    "react": "18.0.0",
-    "react-dom": "18.0.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "react-markdown": "^8.0.3",
     "react-redux": "^8.0.0",
     "redux": "^4.1.2",
     "sharp": "^0.30.4",
-    "swiper": "^8.1.1"
+    "swiper": "^8.1.1",
+    "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.4",

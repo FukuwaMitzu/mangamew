@@ -1,20 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import TagGroup from "../TagGroup";
-import { formatScore, formatAverage } from "../../utilities";
+import { formatScore, formatAverage, uniqueAuthor } from "../../utilities";
 import { Fragment } from "react";
 
 
 
-
 export default function MangaCard({ id, title, tags, authors, artists, cover, status, average, follows }) {
-
-    const uniqueAuthor = (au, ar)=>{
-        au = au.concat(ar.filter((item => {
-            return au.every(e => e.name != item.name);
-        })))   
-        return au.map(item => item.name).join(', ');
-    };
     return (
         <div className="flex gap-5 shadowbox rounded-md overflow-hidden">
             <div className="basis-1/3 flex-shrink-0 max-w-[150px] min-h-[237px] h-full">
@@ -35,7 +27,7 @@ export default function MangaCard({ id, title, tags, authors, artists, cover, st
                         </Link>
                         <p className="text-sm mt-1"><span className="font-bold text-primary mr-2">#</span>
                             {
-                                uniqueAuthor(authors, artists)
+                                uniqueAuthor(authors, artists).map(item=>item.name).join(', ')
                             }
                         </p>
                     </div>
