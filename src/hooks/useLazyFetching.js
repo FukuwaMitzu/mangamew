@@ -49,7 +49,7 @@ export default function useLazyFetching(state, onFetching){
 
         const fetchOnScroll = () => {
             if (containerRef.current && state.result && !state.loading) {
-                if (containerRef.current.getBoundingClientRect().y + containerRef.current.scrollHeight < window.innerHeight *1.5) {
+                if (containerRef.current.getBoundingClientRect().y + containerRef.current.scrollHeight < window.innerHeight) {
                     if(checkLock() || !checkLimit() || !checkOffset() ) return;
                     fetchLockRef.current = true;
                     if(onFetching)onFetching({offset: feedIndex.offset, limit: feedIndex.limit});

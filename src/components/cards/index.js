@@ -4,8 +4,8 @@ import SeasonalMangaCard from "./SeasonalMangaCard";
 import SeasonalSwiperList from "./SeasonalSwiperList";
 import TagCard from "./TagCard";
 import TagSwiperList from "./TagSwiperList";
-import UpdateMangaCard from "./UpdateMangaCard";
-import UpdateSwiperList from "./UpdateSwiperList";
+import UpdateChapterCard from "./UpdateChapterCard";
+import UpdateChapterList from "./UpdateChapterList";
 import MangaCard from "./MangaCard";
 import MangaList from "./MangaList";
 
@@ -14,5 +14,5 @@ export {
     ChapterCard, ChapterList,
     SeasonalMangaCard, SeasonalSwiperList, 
     TagCard, TagSwiperList, 
-    UpdateMangaCard, UpdateSwiperList,
+    UpdateChapterCard, UpdateChapterList
 }

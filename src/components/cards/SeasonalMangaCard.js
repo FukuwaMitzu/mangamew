@@ -18,7 +18,7 @@ export default function SeasonalMangaCard({ id, title, description, average, boo
                         <a>
                             {cover &&
                                 <div className="relative w-full h-full">
-                                    <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} className="object-cover" priority></Image>
+                                    <Image layout="fill" src={`https://uploads.mangadex.org/covers/${id}/${cover}.512.jpg`} className="object-cover" alt={title} title={title} priority></Image>
                                 </div>
                             }
                         </a>

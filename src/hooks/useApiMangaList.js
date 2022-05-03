@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { MangaMewAPIURL } from "../config";
 import qs from "qs";
-import { formatDesciption } from "../utilities";
+import { formatDesciption, formatTitle, formatAltTitles } from "../utilities";
 
 
 const initParams = {
@@ -12,7 +12,7 @@ const initParams = {
     publicationDemographic: [],
     contentRating: [],
     status: [],
-    title: "",
+    title: undefined,
     limit: 32,
     offset: 0,
     order: { relevance: 'desc' },
@@ -33,8 +33,7 @@ export default function useApiMangaList() {
 
     useEffect(() => {
         if (mountRef.current) {
-            if (!state.loading) setState({ ...state, loading: true });
-
+            if (!state.loading) setState({ ...state, loading: true }); 
             axios.get(MangaMewAPIURL("/manga"),
                 {
                     params: {
@@ -42,7 +41,7 @@ export default function useApiMangaList() {
                         ...params
                     },
                     paramsSerializer: e=>{
-                        return qs.stringify(e, {indices:false, arrayFormat:"brackets"});
+                        return qs.stringify(e, {indices:false, arrayFormat:"brackets", encode:false});
                     }
                 }).then(({ data, status }) => {
                     let temp = [];
@@ -56,7 +55,8 @@ export default function useApiMangaList() {
                             manga.id = item.id;
                             manga.status = item.attributes.status;
                             manga.year = item.attributes.year;
-                            manga.title = item.attributes.title.en || item.attributes.title[Object.keys(item.attributes.title)[0]];
+                            manga.altTitle = formatAltTitles(item.attributes.altTitles);
+                            manga.title = formatTitle(item.attributes.title);
                             manga.description = formatDesciption(item.attributes.description);
                             manga.tags = item.attributes.tags.map((tag) => {
                                 return {

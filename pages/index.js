@@ -1,6 +1,8 @@
 import { Fragment, useEffect, useState } from "react";
 import NavigationSection from "../src/components/NavigationSection";
-import { SeasonalSwiperList, UpdateSwiperList, TagSwiperList } from "../src/components/cards";
+import { SeasonalSwiperList, TagSwiperList} from "../src/components/cards";
+import HomeChapterView from "../src/views/HomeChapterView";
+
 import axios from "axios";
 import { MangaMewAPIURL } from "../src/config";
 import useApiMangaList from "../src/hooks/useApiMangaList";
@@ -60,7 +62,7 @@ export default function Home({query, seasonal}) {
 
   return (
     <Fragment>
-      <div className="flex flex-col gap-20 mt-5">
+      <div className="flex flex-col gap-20 mt-5 pb-20">
         <NavigationSection title={seasonal.name} href="/manga/seasonal">
           {
             mangaApi.loading &&
@@ -75,7 +77,7 @@ export default function Home({query, seasonal}) {
           <TagSwiperList list={tagList} />
         </NavigationSection>
         <NavigationSection title="LATEST UPDATE" href="/manga/latest">
-          
+          <HomeChapterView></HomeChapterView>
         </NavigationSection>
       </div>
     </Fragment>

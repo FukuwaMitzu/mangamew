@@ -8,7 +8,6 @@ export default function SearchBar(){
             <span className="material-icons-outlined mr-3">search</span>
             <form className="flex-1" onSubmit={(e)=>{
                 e.preventDefault();
-                console.log(searchTitle);
             }}>
                 <input className="bg-transparent outline-none w-full" type="text" placeholder="What's on your mind?" onChange={(e)=>{setSearchTitle(e.target.value)}}></input>
             </form>

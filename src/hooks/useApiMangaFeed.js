@@ -38,7 +38,7 @@ export default function useApiMangaFeed() {
                         ...initParams,
                         ...params
                     },
-                    paramsSerializer: items=>qs.stringify(items,{indices:false, arrayFormat:"brackets"}) 
+                    paramsSerializer: items=>qs.stringify(items,{indices:false, arrayFormat:"brackets", encode:false}) 
                 }
             ).then(
                 ({ data, status }) => {
