@@ -1,12 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   images: {
     domains: ['uploads.mangadex.org'],
+    minimumCacheTTL: 60,  
   },
   productionBrowserSourceMaps: true,
 }
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
-module.exports = withBundleAnalyzer(nextConfig);
+
+module.exports = nextConfig;

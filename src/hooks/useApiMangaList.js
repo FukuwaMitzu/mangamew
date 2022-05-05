@@ -5,19 +5,19 @@ import qs from "qs";
 import { formatDesciption, formatTitle, formatAltTitles } from "../utilities";
 
 
-const initParams = {
+const initParams ={
     ids: [],
     includedTags: [],
     excludedTags: [],
     publicationDemographic: [],
     contentRating: [],
     status: [],
-    title: undefined,
+    title: "",
     limit: 32,
     offset: 0,
-    order: { relevance: 'desc' },
+    order: {relevance:"desc"},
     availableTranslatedLanguage: ['en'],
-    includes: ['cover_art', 'author', 'artist']
+    includes: ['cover_art', 'author', "artist"],    
 }
 
 export default function useApiMangaList() {

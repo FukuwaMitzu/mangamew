@@ -9,8 +9,8 @@ export default function HomeChapterView() {
     const [chapterApi, setApiChapterParams] = useApiChapter();
     const [mangaApi, setApiMangaParams] = useApiMangaList();
 
-    const [mangaList, setMangaList] = useState([]);
-    const [chapterList, setChapterList] = useState([]);
+    const [mangaList, setMangaList] = useState(new Map());
+    const [chapterList, setChapterList] = useState(new Map());
 
     const [chapterContainerRef, setRefreshFeedApi] = useLazyFetching(chapterApi, (fetchData) => {
         setApiChapterParams({
@@ -26,43 +26,49 @@ export default function HomeChapterView() {
 
     useEffect(() => {
         if (chapterApi.result && !chapterApi.loading) {
-            setChapterList(chapterList.concat(chapterApi.result.data.filter(item =>
-                !chapterList.some(a => a.id == item.id)
-            )))
+            const ChapterMap = new Map(chapterList);
+            chapterApi.result.data.forEach(item=>{
+                ChapterMap.set(item.id, item);
+            });
+
+            setChapterList(ChapterMap);
             setApiMangaParams({
                 ids: chapterApi.result.data.map((item) => item.manga.id),
                 limit: chapterApi.result.data.length,
-                
+                availableTranslatedLanguage:[]
             });
         }
     }, [chapterApi]);
 
+    
     useEffect(() => {
         if (mangaApi.result && !mangaApi.loading) {
-            setMangaList(mangaList.concat(mangaApi.result.data.filter(item =>
-                !mangaList.some(a => a.id == item.id)
-            )));
+            const output = new Map(mangaList);
+            mangaApi.result.data.forEach(item=>{
+                output.set(item.id, item);
+            });
+            setMangaList(output);
         }
     }, [mangaApi]);
 
     useEffect(() => {
-        let output = [];
-        chapterList.forEach(item => {
+        let output = new Map(chapterList);
+        for( const [key, item] of output){
             if (!item.manga.cover) {
-                let manga = mangaList.find(a => a.id == item.manga.id)
+                let manga = mangaList.get(item.manga.id);
                 if (manga) {
-                    item.manga = manga;
-                    output.push(item);
+                    item.manga = manga;     
                 }
-            }else output.push(item);
-        });
+                else output.delete(key);
+            }
+        }
         setChapterList(output);
     }, [mangaList]);
 
     return (
         <div ref={chapterContainerRef}>
-            {   chapterList.length>0 &&
-                <UpdateChapterList list={chapterList}></UpdateChapterList>
+            {   chapterList.size> 0 &&
+                <UpdateChapterList iterator={chapterList}></UpdateChapterList>
             }
             {
                 chapterApi.loading &&

@@ -39,7 +39,7 @@ const tagList = [
   },
 ]
 
-export default function Home({query, seasonal}) {
+export default function Home({seasonal}) {
   const [mangaApi, setMangaApiParams] = useApiMangaList();
   const [mangaList, setMangaList] = useState([]);
 
@@ -51,7 +51,7 @@ export default function Home({query, seasonal}) {
         offset:0,
         order: {followedCount:"desc"}
       });
-  }, []);
+  }, [seasonal]);
 
   useEffect(()=>{
     if(mangaApi.result && !mangaApi.loading){

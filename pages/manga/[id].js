@@ -51,7 +51,7 @@ const orderList = [
 export default function MangaPage({ id, title, altTitle, tags, authors, artists, cover, description, status, year, firstChapterId }) {
     const [average, setAverage] = useState();
     const [follows, setFollows] = useState();
-    const [chapterList, setChapterList] = useState([]);
+    const [chapterList, setChapterList] = useState(new Map());
 
 
 
@@ -77,13 +77,11 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
     }, []);
     useEffect(() => {
         if (!feedApi.loading && feedApi.result) {
-            setChapterList(
-                chapterList.concat(
-                    feedApi.result.data.filter(
-                        item => !chapterList.some(a => a.id == item.id)
-                    )
-                )
-            );
+            const chapterMap = new Map(chapterList);
+            feedApi.result.data.forEach(item=>{
+                chapterMap.set(item.id, item);
+            })
+            setChapterList(chapterMap);
         }
     }, [feedApi]);
     useEffect(() => {
@@ -229,8 +227,8 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                         </div>
                     </div>
                     {
-                        chapterList.length > 0 &&
-                        <div ref={chapterContainerRef}><ChapterList list={chapterList} /></div>
+                        chapterList.size > 0 &&
+                        <div ref={chapterContainerRef}><ChapterList list={Array.from(chapterList.values())} /></div>
                     }
                     {
                         feedApi.loading &&

@@ -45,7 +45,7 @@ export default function NavigationBar() {
                         </button>
                     }
                     <Link href="/">
-                        <a className="transition-all">
+                        <a>
                             <h1 className="font-bold text-xl">MANGAMEW</h1>
                         </a>
                     </Link>
