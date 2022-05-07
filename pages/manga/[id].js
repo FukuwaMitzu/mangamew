@@ -21,7 +21,7 @@ import Loading from "../../src/components/Loading";
 const ChapterList = dynamic(() => import("../../src/components/cards/ChapterList"));
 import ReactMarkdown from "react-markdown";
 import useLazyFetching from "../../src/hooks/useLazyFetching";
-import ReadMore from "../../src/components/ReadMore";
+import ShowMore from "../../src/components/ShowMore";
 import SelectBox from "../../src/components/SelectBox";
 
 
@@ -171,7 +171,7 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                 <div className="w-full lg:sticky lg:top-20 lg:max-h-[80vh] lg:h-max lg:border-r-grey lg:col-span-5 lg:overflow-y-auto">
                     <Section title="Description">
                         <div className="flex flex-col items-center lg:block lg:items-start">
-                            <ReadMore height={100}>
+                            <ShowMore height={100}>
                                 <div className="text-sm h-fit overflow-hidden">
                                     {
                                         description.trim() != "" ?
@@ -180,7 +180,7 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                                             "This manga has no description yet"
                                     }
                                 </div>
-                            </ReadMore>
+                            </ShowMore>
                         </div>
                     </Section>
                     <div className="mt-14">

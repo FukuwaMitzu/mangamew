@@ -9,6 +9,7 @@ export default function SeasonalSwiperList({ list }) {
         <Swiper
             slidesPerView="auto"
             modules={[Pagination]}
+            loop
             pagination={{
                 clickable: true,
                 el: "#seasonal-pagination",

@@ -41,7 +41,6 @@ const tagList = [
 
 export default function Home({seasonal}) {
   const [mangaApi, setMangaApiParams] = useApiMangaList();
-  const [mangaList, setMangaList] = useState([]);
 
 
   useEffect(()=>{
@@ -52,12 +51,6 @@ export default function Home({seasonal}) {
         order: {followedCount:"desc"}
       });
   }, [seasonal]);
-
-  useEffect(()=>{
-    if(mangaApi.result && !mangaApi.loading){
-        setMangaList(mangaApi.result.data);
-    }
-  },[mangaApi]);
 
 
   return (

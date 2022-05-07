@@ -1,19 +1,19 @@
 import useApiMangaList from "../hooks/useApiMangaList";
-import useApiChapter from "../hooks/useApiChapter";
+import useApiChapterList from "../hooks/useApiChapterList";
 import useLazyFetching from "../hooks/useLazyFetching";
 import Loading from "../../src/components/Loading";
 import { useEffect, useState } from "react";
 import { UpdateChapterList } from "../components/cards";
 
 export default function HomeChapterView() {
-    const [chapterApi, setApiChapterParams] = useApiChapter();
+    const [chapterListApi, setApiChapterListParams] = useApiChapterList();
     const [mangaApi, setApiMangaParams] = useApiMangaList();
 
     const [mangaList, setMangaList] = useState(new Map());
     const [chapterList, setChapterList] = useState(new Map());
 
-    const [chapterContainerRef, setRefreshFeedApi] = useLazyFetching(chapterApi, (fetchData) => {
-        setApiChapterParams({
+    const [chapterContainerRef, setRefreshFeedApi] = useLazyFetching(chapterListApi, (fetchData) => {
+        setApiChapterListParams({
             offset: fetchData.offset,
             limit: fetchData.limit,
         });
@@ -21,24 +21,24 @@ export default function HomeChapterView() {
 
 
     useEffect(() => {
-        setApiChapterParams({ limit: 40});
+        setApiChapterListParams({ limit: 40});
     }, []);
 
     useEffect(() => {
-        if (chapterApi.result && !chapterApi.loading) {
+        if (chapterListApi.result && !chapterListApi.loading) {
             const ChapterMap = new Map(chapterList);
-            chapterApi.result.data.forEach(item=>{
+            chapterListApi.result.data.forEach(item=>{
                 ChapterMap.set(item.id, item);
             });
 
             setChapterList(ChapterMap);
             setApiMangaParams({
-                ids: chapterApi.result.data.map((item) => item.manga.id),
-                limit: chapterApi.result.data.length,
+                ids: chapterListApi.result.data.map((item) => item.manga.id),
+                limit: chapterListApi.result.data.length,
                 availableTranslatedLanguage:[]
             });
         }
-    }, [chapterApi]);
+    }, [chapterListApi]);
 
     
     useEffect(() => {
@@ -71,7 +71,7 @@ export default function HomeChapterView() {
                 <UpdateChapterList iterator={chapterList}></UpdateChapterList>
             }
             {
-                chapterApi.loading &&
+                chapterListApi.loading &&
                 <Loading></Loading>
             }
         </div>
