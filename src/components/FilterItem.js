@@ -13,7 +13,7 @@ function FilterItem({id, name, mode, max, onFilterChange, disable}){
     };
     
     return (
-        <button className={`${mode==1? "bg-primary text-dominant": "bg-grey"} py-1 px-2 transition-colors rounded-xl ${mode==2?"shadow-outline shadow-primary":""}  ${disable?"opacity-80 cursor-default": ""}`} onClick={(e)=>{disable? e.preventDefault() :triggerFilterMode()}}>
+        <button className={`${mode==1? "bg-primary text-dominant": "bg-grey"} py-1 px-2 border transition-colors rounded-xl ${mode==2?"shadow-outline shadow-primary":""}  ${disable?"opacity-80 cursor-default": ""}`} onClick={(e)=>{disable? e.preventDefault() :triggerFilterMode()}}>
             <div className="flex items-center capitalize">
                 {
                     mode>0 &&

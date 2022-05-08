@@ -173,7 +173,7 @@ export default function TitlePage({ query }) {
         }
         catch { }
         setTagApiParams({ include: include, exclude: exclude });
-    }, [query]);
+    }, []);
 
     //Update state when router query changed
     useEffect(() => {

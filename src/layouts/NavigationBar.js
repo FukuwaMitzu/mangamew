@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import Avatar from "../components/Avatar";
 import NavigationButton from "../components/NavigationButton";
 import SearchBar from "../components/SearchBar";
@@ -11,7 +11,6 @@ import { onSideBarTrigger } from "../reducers/sideBarReducer";
 export default function NavigationBar() {
     const router = useRouter();
     const storeDispatch = useDispatch();
-    const sideBarState = useSelector((state) => state.SideBar);
     const navbarScrollRef = useRef();
 
 
@@ -38,12 +37,9 @@ export default function NavigationBar() {
             <div className="w-full origin-left absolute top-0 border-b-2 border-b-primary" ref={navbarScrollRef}></div>
             <div className="max-w-[1340px] mx-auto grid grid-cols-10 gap-3 items-center w-full pt-3 pb-4 px-5">
                 <div className="col-span-2 flex gap-3">
-                    {
-                        !sideBarState.isActive &&
-                        <button className="leading-[0]" onClick={triggerSideBar}>
-                            <span className="material-icons-outlined">menu</span>
-                        </button>
-                    }
+                    <button className="leading-[0]" onClick={triggerSideBar}>
+                        <span className="material-icons-outlined">menu</span>
+                    </button>
                     <Link href="/">
                         <a>
                             <h1 className="font-bold text-xl">MANGAMEW</h1>
