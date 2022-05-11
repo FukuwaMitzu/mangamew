@@ -1,13 +1,13 @@
-import { Fragment, useEffect, useState } from "react";
-import NavigationSection from "../src/components/NavigationSection";
-import { SeasonalSwiperList, TagSwiperList} from "../src/components/cards";
-import HomeChapterView from "../src/views/HomeChapterView";
+import { Fragment, useEffect } from "react";
+import NavigationSection from "src/components/NavigationSection";
+import { SeasonalSwiperList, TagSwiperList} from "src/components/cards";
+import HomeChapterView from "src/views/HomeChapterView";
 
 import axios from "axios";
-import { MangaMewAPIURL } from "../src/config";
-import useApiMangaList from "../src/hooks/useApiMangaList";
+import { MangaMewAPIURL } from "src/config";
+import useApiMangaList from "src/hooks/useApiMangaList";
 
-import Loading from "../src/components/Loading";
+import Loading from "src/components/Loading";
 
 
 
@@ -51,7 +51,6 @@ export default function Home({seasonal}) {
         order: {followedCount:"desc"}
       });
   }, [seasonal]);
-
 
   return (
     <Fragment>

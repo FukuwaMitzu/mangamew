@@ -1,4 +1,4 @@
-import { MangaMewAPIURL } from "../config";
+import { MangaMewAPIURL } from "src/config";
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";

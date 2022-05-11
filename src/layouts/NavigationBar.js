@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback} from "react";
 import { useDispatch} from "react-redux";
-import Avatar from "../components/Avatar";
-import NavigationButton from "../components/NavigationButton";
-import SearchBar from "../components/SearchBar";
-import { onSideBarTrigger } from "../reducers/sideBarReducer";
+import Avatar from "src/components/Avatar";
+import NavigationButton from "src/components/NavigationButton";
+import SearchBar from "src/components/SearchBar";
+import { onSideBarTrigger } from "src/reducers/sideBarReducer";
 
 
 export default function NavigationBar() {
     const router = useRouter();
     const storeDispatch = useDispatch();
-    const navbarScrollRef = useRef();
+   
 
 
     const triggerSideBar = useCallback(() => {
@@ -19,23 +19,9 @@ export default function NavigationBar() {
     }, [storeDispatch]);
 
 
-    useEffect(()=>{
-        navbarScrollRef.current.style.transform = `scaleX(${0})`;
-        const scrollAtRealTime = (e)=>{
-            let bodyScrollY = (window.scrollY / (document.documentElement.offsetHeight - window.innerHeight));
-            navbarScrollRef.current.style.transform = `scaleX(${bodyScrollY})`;
-        }
-        window.addEventListener('scroll', scrollAtRealTime);
-        return ()=>{
-            window.removeEventListener('scroll', scrollAtRealTime);
-        }
-    }, [router]);
-
-
     return (
         <div className="bg-dominant sticky inset-0 z-40 bg-opacity-95">
-            <div className="w-full origin-left absolute top-0 border-b-2 border-b-primary" ref={navbarScrollRef}></div>
-            <div className="max-w-[1340px] mx-auto grid grid-cols-10 gap-3 items-center w-full pt-3 pb-4 px-5">
+            <div className="max-w-[1340px] mx-auto grid grid-cols-10 gap-3 items-center w-full py-3 px-5">
                 <div className="col-span-2 flex gap-3">
                     <button className="leading-[0]" onClick={triggerSideBar}>
                         <span className="material-icons-outlined">menu</span>

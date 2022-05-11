@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { MangaMewAPIURL } from "../config";
+import { MangaMewAPIURL } from "src/config";
 import qs from "qs";
 
 
@@ -41,7 +41,6 @@ export default function useApiAggregate() {
                     });
                 });
                 chapterList.sort((a, b) => {
-                   
                     return a.chapter - b.chapter;
                 });
                 setState({

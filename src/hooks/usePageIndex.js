@@ -15,7 +15,7 @@ export default function usePageIndex(index){
             let a = ((index || 1) - 1) * 32;
             setState({...state,offset:a});
         } 
-    }, []);
+    }, [index]);
 
     useEffect(()=>{
         let a = ((router.query.page || 1) - 1) * state.limit;

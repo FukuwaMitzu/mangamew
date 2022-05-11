@@ -1,8 +1,8 @@
-import '../styles/globals.css'
-import App from '../src/layouts/App'
+import 'styles/globals.css'
+import App from 'src/layouts/App'
 import { Fragment } from 'react'
 import { Provider } from 'react-redux'
-import store from "../src/store"
+import store from "src/store"
 
 import "@fontsource/material-icons-outlined";
 import "@fontsource/poppins";

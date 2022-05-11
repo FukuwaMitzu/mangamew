@@ -1,16 +1,20 @@
 import Head from "next/head";
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
-import { formatAltTitles, formatTitle, formatDesciption } from "../../src/utilities";
-import useApiAtHome from "../../src/hooks/useApiAtHome";
-import { MangaMewAPIURL } from "../../src/config";
+import { formatAltTitles, formatTitle, formatDesciption, formatChapter } from "src/utilities";
+import useApiAtHome from "src/hooks/useApiAtHome";
+import { MangaMewAPIURL } from "src/config";
 import uniqid from "uniqid";
-import useApiAggregate from "../../src/hooks/useApiAggregate";
-import SelectBox from "../../src/components/SelectBox";
+import useApiAggregate from "src/hooks/useApiAggregate";
+import SelectBox from "src/components/SelectBox";
 import { useRouter } from "next/router";
-import Loading from "../../src/components/Loading";
+import Loading from "src/components/Loading";
 import Link from "next/link";
-import BackNavigation from "../../src/components/BackNavigation";
+import BackNavigation from "src/components/BackNavigation";
+import ImageLoader from "src/components/ImageLoader";
+import Button from "src/components/Button";
+
+
 export default function Chapter({ id, chapter, title, externalUrl, manga }) {
     const router = useRouter();
     const [aggregateApi, setApiAggregateParams] = useApiAggregate();
@@ -49,7 +53,7 @@ export default function Chapter({ id, chapter, title, externalUrl, manga }) {
             let list = aggregateApi.result.data.map(item => {
                 return {
                     ...item,
-                    toString: () => `Ch. ${item.chapter}`
+                    toString: () => formatChapter(item.chapter)
                 }
             });
             setChapterList(list);
@@ -61,22 +65,24 @@ export default function Chapter({ id, chapter, title, externalUrl, manga }) {
         if (atHomeApi.result && !atHomeApi.loading && !externalUrl) {
             let list = [];
             atHomeApi.result.data.forEach(element => {
-                list.push([atHomeApi.result.baseUrl, "data", atHomeApi.result.hash, element].join('/'));
+                list.push({
+                    id: uniqid(),
+                    src: [atHomeApi.result.baseUrl, "data", atHomeApi.result.hash, element].join('/')
+                });
             });
             setImageList(list);
         }
-
-        if (chapterList.length>0) {
-            let curentIndex = chapterList.findIndex(item => item.id === id);
-            if (curentIndex + 1 < chapterList.length) setNextChapter(chapterList[curentIndex + 1]);
-            else setNextChapter(null);
-            if (curentIndex - 1 >= 0) setPreChapter(chapterList[curentIndex - 1]);
-            else setPreChapter(null);
-            setCurentChapter(chapterList[curentIndex]);
-        }
-
     }, [atHomeApi]);
 
+    useEffect(() => {
+        let curentIndex = chapterList.findIndex(item => item.id == id || item.others.find(a=>a==id));
+        if (curentIndex + 1 < chapterList.length) setNextChapter(chapterList[curentIndex + 1]);
+        else setNextChapter(null);
+        if (curentIndex - 1 >= 0) setPreChapter(chapterList[curentIndex - 1]);
+        else setPreChapter(null);
+        setCurentChapter(chapterList[curentIndex]);
+
+    }, [chapterList, id]);
 
     return (
         <Fragment>
@@ -84,14 +90,11 @@ export default function Chapter({ id, chapter, title, externalUrl, manga }) {
                 <title>{[(chapter ? `Ch. ${chapter}` : "Oneshot"), title ? title : manga.title].join(' - ')}</title>
             </Head>
             <div className="mt-5">
-                <BackNavigation href={`/manga/${manga.id}`} title={manga.title}/>
+                <BackNavigation href={`/manga/${manga.id}`} title={manga.title} />
             </div>
+            <h2 className="mt-5 mb-3">{formatChapter(chapter, title)}</h2>
             {
-                title &&
-                <h2 className="my-5">Ch. {chapter}{title? `: ${title}`: ""}</h2>
-            }
-            {
-                chapterList.length > 0 && curentChapter!==undefined &&
+                curentChapter !== undefined && preChapter !== undefined && nextChapter !== undefined &&
                 <div className="grid grid-cols-12 gap-2 z-10 my-3">
                     <button className={`group transition-colors bg-grey col-span-2 px-2 flex items-center justify-center ${preChapter ? "active:bg-grey-dark" : "opacity-50 cursor-default"}`} onClick={backPreChapter}>
                         <span className={`material-icons-outlined transition-transform ${preChapter ? "group-hover:-translate-x-1" : ""}`}>chevron_left</span>
@@ -108,27 +111,40 @@ export default function Chapter({ id, chapter, title, externalUrl, manga }) {
             }
             {
                 atHomeApi.result && !atHomeApi.loading && !externalUrl &&
-                <div className="flex flex-col items-center">
+                <Fragment>
+                    <div className="flex flex-col items-center">
+                        {
+                            imageList.map(item => {
+                                return <div key={item.id} className="relative max-w-2xl">
+                                    <ImageLoader src={item.src}></ImageLoader>
+                                </div>
+                            })
+                        }
+                    </div>
                     {
-                        imageList.map(item => {
-                            return <div key={uniqid()} className="relative max-w-2xl">
-                                <img src={item} loading="lazy" placeholder="empty"></img>
-                            </div>
-                        })
+                        atHomeApi.loading &&
+                        <Loading></Loading>
                     }
+                    {
+                        nextChapter !== undefined && !atHomeApi.loading &&
+                        <Link href={nextChapter ? `/chapter/${nextChapter.id}` : `/manga/${manga.id}`}>
+                            <a>
+                                <button className="bg-primary text-dominant w-full text-lg py-5 rounded-md active:bg-primary-dark transition-colors mt-3">{nextChapter ? "Read the next chapter" : "Go to manga page"}</button>
+                            </a>
+                        </Link>
+                    }
+                </Fragment>
+            }
+            {
+                externalUrl &&
+                <div className="flex flex-col text-center mt-20 justify-center items-center">
+                    <p className="mb-5">{"This chapter can be read for free on the official publisher's website"}</p>
+                    <Link href={externalUrl}>
+                        <a target={"_blank"}>
+                            <Button startIcon={<span className="material-icons-outlined">open_in_new</span>}>Read the chapter</Button>
+                        </a>
+                    </Link>
                 </div>
-            }
-            {
-                atHomeApi.loading && !externalUrl &&
-                <Loading></Loading>
-            }
-            {
-                nextChapter!==undefined && !atHomeApi.loading &&
-                <Link href={nextChapter? `/chapter/${nextChapter.id}`: `/manga/${manga.id}`}>
-                    <a>
-                        <button className="bg-primary text-dominant w-full text-xl py-5 rounded-md active:bg-primary-dark transition-colors mt-3">{nextChapter? "Read the next chapter":"Go to manga page"}</button>
-                    </a>
-                </Link>
             }
         </Fragment>
     )

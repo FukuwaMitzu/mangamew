@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { connect, useDispatch } from "react-redux";
-import SideBarButton from "../components/SideBarButton";
-import { onSideBarTrigger } from "../reducers/sideBarReducer";
+import SideBarButton from "src/components/SideBarButton";
+import { onSideBarTrigger } from "src/reducers/sideBarReducer";
 const sideBarWidth = 250;
 
 function SideBar(props) {

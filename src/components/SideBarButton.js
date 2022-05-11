@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { onSideBarTrigger } from "../reducers/sideBarReducer";
+import { onSideBarTrigger } from "src/reducers/sideBarReducer";
 
 const ClassActive = (isActive) => {
     if (isActive) return "bg-primary text-dominant active:bg-primary-dark";

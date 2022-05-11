@@ -8,7 +8,6 @@ export default function SelectBox({ list, select, label, onSelectedChange, maxDi
     const selectedRef = useRef({});
     
     useEffect(() => {
-        
         if(listRef.current && selectedRef.current){
             let tempMaxDisplayItems = maxDisplayItem||10;
             //Change the display, max is 10 items by default

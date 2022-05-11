@@ -5,7 +5,7 @@ const nextConfig = {
     domains: ['uploads.mangadex.org'],
     minimumCacheTTL: 60,  
   },
-  productionBrowserSourceMaps: true,
+  swcMinify:true,
 }
 
 module.exports = nextConfig;

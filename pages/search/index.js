@@ -1,21 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import SearchFilterBar from "../../src/components/SearchFilterBar"
+import SearchFilterBar from "src/components/SearchFilterBar"
 
 
 import { useRouter } from "next/router";
-const MangaList = dynamic(() => import("../../src/components/cards/MangaList"));
-const Pagination = dynamic(() => import("../../src/components/Pagination"));
+const MangaList = dynamic(() => import("src/components/cards/MangaList"));
+const Pagination = dynamic(() => import("src/components/Pagination"));
 
-import SelectBox from "../../src/components/SelectBox";
-import BackNavigation from "../../src/components/BackNavigation";
-import Loading from "../../src/components/Loading";
+import SelectBox from "src/components/SelectBox";
+import BackNavigation from "src/components/BackNavigation";
+import Loading from "src/components/Loading";
 
-import useApiMangaList from "../../src/hooks/useApiMangaList";
-import useApiTagList from "../../src/hooks/useApiTagList";
-import useApiStatisticList from "../../src/hooks/useApiStatisticList";
-import usePageIndex from "../../src/hooks/usePageIndex";
+import useApiMangaList from "src/hooks/useApiMangaList";
+import useApiTagList from "src/hooks/useApiTagList";
+import useApiStatisticList from "src/hooks/useApiStatisticList";
+import usePageIndex from "src/hooks/usePageIndex";
 
 
 const orderList = [
@@ -269,6 +269,7 @@ export default function TitlePage({ query }) {
 
     useEffect(() => {
         if (tagList.length > 0) {
+            setMangaList([]);
             setMangaApiParams({
                 includedTags: tagList.filter((item) => item.mode == 1).map(item => item.id),
                 excludedTags: tagList.filter((item) => item.mode == 2).map(item => item.id),
@@ -413,9 +414,9 @@ export default function TitlePage({ query }) {
                 <Loading></Loading>
             }
             {
-                mangaApi.result && !mangaApi.loading &&
+                mangaList.length>0 && !mangaApi.loading &&
                 <Fragment>
-                    <MangaList list={mangaApi.result.data}></MangaList>
+                    <MangaList list={mangaList}></MangaList>
                     <div className="mx-auto w-fit mt-10">
                         <Pagination limit={page.limit} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>
                     </div>

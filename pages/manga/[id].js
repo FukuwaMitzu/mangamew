@@ -1,28 +1,26 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import TagGroup from "../../src/components/TagGroup";
-import Button from "../../src/components/Button";
-import { Fragment, useEffect, useState } from "react";
-import Section from "../../src/components/Section";
+import TagGroup from "src/components/TagGroup";
+import Button from "src/components/Button";
+import { Fragment, useEffect, useState, Suspense } from "react";
+import Section from "src/components/Section";
 import Head from "next/head";
-import { uniqueAuthor } from "../../src/utilities";
 
 
 import axios from "axios";
 import qs from "qs";
-import { formatAltTitles, formatAverage, formatDesciption, formatScore, formatTitle } from "../../src/utilities";
+import { formatAltTitles, formatAverage, formatDesciption, formatScore, formatTitle, uniqueAuthor } from "src/utilities";
 import Link from "next/link";
-import useApiStatisticList from "../../src/hooks/useApiStatisticList";
-import useApiMangaFeed from "../../src/hooks/useApiMangaFeed";
-import { MangaMewAPIURL, MangaMewURL } from "../../src/config";
-import Loading from "../../src/components/Loading";
+import useApiStatisticList from "src/hooks/useApiStatisticList";
+import useApiMangaFeed from "src/hooks/useApiMangaFeed";
+import { MangaMewAPIURL, MangaMewURL } from "src/config";
+import Loading from "src/components/Loading";
 
-
-const ChapterList = dynamic(() => import("../../src/components/cards/ChapterList"));
-import ReactMarkdown from "react-markdown";
-import useLazyFetching from "../../src/hooks/useLazyFetching";
-import ShowMore from "../../src/components/ShowMore";
-import SelectBox from "../../src/components/SelectBox";
+const ChapterList = dynamic(() => import("src/components/cards/ChapterList"));
+const ReactMarkdown = dynamic(()=>import("react-markdown"));
+import useLazyFetching from "src/hooks/useLazyFetching";
+import ShowMore from "src/components/ShowMore";
+import SelectBox from "src/components/SelectBox";
 
 
 //Custom markdown elements for description
@@ -171,16 +169,18 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                 <div className="w-full lg:sticky lg:top-20 lg:max-h-[80vh] lg:h-max lg:border-r-grey lg:col-span-5 lg:overflow-y-auto">
                     <Section title="Description">
                         <div className="flex flex-col items-center lg:block lg:items-start">
-                            <ShowMore height={100}>
-                                <div className="text-sm h-fit overflow-hidden">
-                                    {
-                                        description.trim() != "" ?
-                                            <ReactMarkdown components={customComponents}>{description}</ReactMarkdown>
-                                            :
-                                            "This manga has no description yet"
-                                    }
-                                </div>
-                            </ShowMore>
+                            <Suspense fallback={<Loading></Loading>}>
+                                <ShowMore height={100}>
+                                    <div className="text-sm h-fit overflow-hidden">
+                                        {
+                                            description.trim() != "" ?
+                                                <ReactMarkdown components={customComponents}>{description}</ReactMarkdown>
+                                                :
+                                                "This manga has no description yet"
+                                        }
+                                    </div>
+                                </ShowMore>
+                            </Suspense>
                         </div>
                     </Section>
                     <div className="mt-14">
@@ -226,14 +226,15 @@ export default function MangaPage({ id, title, altTitle, tags, authors, artists,
                             <SelectBox list={orderList} select={orderList[1]} onSelectedChange={sortChapter} label={"Sort by"}></SelectBox>
                         </div>
                     </div>
-                    {
-                        chapterList.size > 0 &&
-                        <div ref={chapterContainerRef}><ChapterList list={Array.from(chapterList.values())} /></div>
-                    }
-                    {
-                        feedApi.loading &&
-                        <Loading></Loading>
-                    }
+
+                    <Suspense fallback={<Loading></Loading>}>
+                        {
+                            chapterList.size > 0?
+                            <div ref={chapterContainerRef}><ChapterList list={Array.from(chapterList.values())} /></div>
+                            :
+                            <Loading></Loading>
+                        }
+                    </Suspense>                                 
                     {
                         !feedApi.loading &&
                         <button className="bg-primary p-5 rounded-md text-dominant w-full active:bg-primary-dark transition-all mt-3" onClick={() => {

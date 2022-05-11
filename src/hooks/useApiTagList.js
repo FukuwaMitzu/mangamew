@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { useRef, useState } from "react";
-import { MangaMewAPIURL } from "../config";
+import { MangaMewAPIURL } from "src/config";
 
 export default function useApiTagList() {
     const mountRef = useRef(false);

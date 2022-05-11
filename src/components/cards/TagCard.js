@@ -9,7 +9,7 @@ export default function TagCard({ id, name, cover }) {
     return (
         <Link href={MakeTagLink(id)}>
             <a>
-                <div className="group max-w-[300px] w-full h-[217px] overflow-hidden rounded-md relative shadowbox">
+                <div className="group max-w-xs w-full h-48 overflow-hidden rounded-md relative shadowbox">
                     <div className="relative h-full w-full bg-grey">
                         <Image layout="fill" src={cover || "/"} objectFit={"cover"} alt={name} draggable="false" priority></Image>
                     </div>

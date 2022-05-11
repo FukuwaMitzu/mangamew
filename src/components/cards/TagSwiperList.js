@@ -1,5 +1,5 @@
 import {Swiper, SwiperSlide} from "swiper/react";
-import TagCard from "./TagCard"
+import TagCard from "./TagCard";
 
 import "swiper/css"
 
