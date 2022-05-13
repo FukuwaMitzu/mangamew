@@ -3,25 +3,19 @@ import axios from "axios";
 import { MangaMewAPIURL } from "../config";
 import qs from "qs";
 import { formatDesciption, formatTitle, formatAltTitles } from "../utilities";
+import { useSelector } from "react-redux";
 
 
 const initParams ={
-    ids: [],
-    includedTags: [],
-    excludedTags: [],
-    publicationDemographic: [],
-    contentRating: [],
-    status: [],
-    title: "",
     limit: 32,
     offset: 0,
-    order: {relevance:"desc"},
-    availableTranslatedLanguage: ['en'],
     includes: ['cover_art', 'author', "artist"],    
 }
 
-export default function useApiMangaList() {
+export default function useApiUserFollowsManga() {
+    const userSelector = useSelector((state)=>state.User);
     const mountRef = useRef(false);
+
 
     const [params, setParams] = useState(initParams);
     const [state, setState] = useState({
@@ -31,13 +25,16 @@ export default function useApiMangaList() {
     });
 
     useEffect(() => {
-        if (mountRef.current) {
+        if (mountRef.current && userSelector.isAuthenticated) {
             if (!state.loading) setState({ ...state, loading: true }); 
-            axios.get(MangaMewAPIURL("/manga"),
+            axios.get(MangaMewAPIURL("/user/follows/manga"),
                 {
                     params: {
                         ...initParams,
                         ...params
+                    },
+                    headers:{
+                        "Authorization": `Bearer ${userSelector.token}`
                     },
                     paramsSerializer: e=>{
                         return qs.stringify(e, {indices:false, arrayFormat:"brackets", encode:false});

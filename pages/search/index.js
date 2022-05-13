@@ -5,8 +5,8 @@ import SearchFilterBar from "src/components/SearchFilterBar"
 
 
 import { useRouter } from "next/router";
-const MangaList = dynamic(() => import("src/components/cards/MangaList"));
-const Pagination = dynamic(() => import("src/components/Pagination"));
+const MangaList = dynamic(() => import("src/components/cards/MangaList"), {ssr:false});
+const Pagination = dynamic(() => import("src/components/Pagination"),  {ssr:false, loading: ()=><Loading></Loading>});
 
 import SelectBox from "src/components/SelectBox";
 import BackNavigation from "src/components/BackNavigation";
@@ -408,19 +408,19 @@ export default function TitlePage({ query }) {
                         </div>
                     </div>
                 </Fragment>
-            }
-            {
-                mangaApi.loading &&
-                <Loading></Loading>
-            }
+            }            
             {
                 mangaList.length>0 && !mangaApi.loading &&
                 <Fragment>
-                    <MangaList list={mangaList}></MangaList>
+                    <MangaList list={mangaList}></MangaList>                   
                     <div className="mx-auto w-fit mt-10">
                         <Pagination limit={page.limit} offset={page.offset} total={Math.min(page.total, 10000)} onPageChange={updatePageChange}></Pagination>
                     </div>
                 </Fragment>
+            }
+            {
+                mangaApi.loading &&
+                <Loading></Loading>
             }
         </Fragment>
     )

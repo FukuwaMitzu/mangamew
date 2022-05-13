@@ -62,9 +62,6 @@ function SideBar(props) {
                             <li>
                                 <SideBarButton href="/libary/history">History</SideBarButton>
                             </li>
-                            <li>
-                                <SideBarButton href="/libary/bookmarks">Bookmarks</SideBarButton>
-                            </li>
                         </ul>
                     </li>
                     <hr className="my-3"></hr>

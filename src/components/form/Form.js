@@ -1,18 +1,18 @@
 import React, { useState } from "react"
 
 const FormContext = React.createContext();
-export default function Form({children, method}){
+export default function Form({children, method, onSubmit}){
     const [state, setState] = useState({
         method: method || "GET"
     });
 
-    const onSubmit = (e)=>{
+    const handleSubmit = (e)=>{
         e.preventDefault();
-        console.log(state);
+        if(onSubmit)onSubmit(state);
     }
 
     return <FormContext.Provider value={state}>
-        <form onSubmit={onSubmit} method={state.method}>
+        <form onSubmit={handleSubmit} method={state.method}>
             {children}
         </form>
     </FormContext.Provider>

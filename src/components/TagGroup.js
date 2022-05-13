@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function TagGroup({list}){
     return (
-        <div className="flex flex-wrap gap-x-2 gap-y-1">
+        <div className="flex flex-wrap gap-1">
             { list.map((item)=>{
                 return (
                     <Link href={`/tag/${item.id}`} key={item.id}>

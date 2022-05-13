@@ -1,13 +1,14 @@
 import { Fragment, useEffect } from "react";
 import NavigationSection from "src/components/NavigationSection";
 import { SeasonalSwiperList, TagSwiperList} from "src/components/cards";
-import HomeChapterView from "src/views/HomeChapterView";
+const HomeChapterView = dynamic(()=>import("src/views/HomeChapterView"), {ssr:false, loading:()=><Loading></Loading>});
 
 import axios from "axios";
 import { MangaMewAPIURL } from "src/config";
 import useApiMangaList from "src/hooks/useApiMangaList";
 
 import Loading from "src/components/Loading";
+import dynamic from "next/dynamic";
 
 
 
