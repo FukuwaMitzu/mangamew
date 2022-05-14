@@ -6,10 +6,12 @@ import { MangaMewAPIURL } from "src/config";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { saveAuthTokens } from "src/reducers/userReducer";
+import { useState } from "react";
 
 
 export default function LoginForm() {
     const router = useRouter();
+    const [err, setErr] = useState(null);
     const storeDispatch = useDispatch();
 
 
@@ -27,11 +29,16 @@ export default function LoginForm() {
                     router.push("/");
                 }
             }
-        );
+        ).catch((e)=>{
+            if(e.response){
+                setErr(e.response.data);
+            }
+        });
     }
 
     return (
-        <div className="w-full max-w-lg">
+        <div className="w-full max-w-lg m-auto">
+            <h1 className="text-4xl font-bold text-center my-5">Login</h1>
             <Form method={"POST"} onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-2">
                     <TextBox label={"username"} id="loginUsername"></TextBox>
@@ -39,6 +46,10 @@ export default function LoginForm() {
                     <Submit name="Login"></Submit>
                 </div>
             </Form>
+            {
+                err &&
+                <div className="my-5">{err.errors[0].detail}</div>
+            }
         </div>
     )
 }
