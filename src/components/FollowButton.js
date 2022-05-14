@@ -13,12 +13,10 @@ export default function FollowButton({ mangaId }) {
     const [isLoading, setLoading] = useState(true);
 
     useEffect(()=>{
-        if(!mangaFollowApi.loading || !mangaUnFollowApi.loading)
         setApiUserFollowMangaIdParams({id:mangaId});
     }, [mangaId, mangaFollowApi, mangaUnFollowApi]);
 
     const handleClick = ()=>{
-        console.log(userFollowMangaIdApi)
         if(userFollowMangaIdApi.result && userFollowMangaIdApi.result.data == "ok"){
             setApiMangaUnfollowParams({id:mangaId});
         }

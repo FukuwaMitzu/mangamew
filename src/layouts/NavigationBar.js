@@ -39,7 +39,7 @@ export default function NavigationBar() {
                     <div className="hidden text-sm lg:flex gap-10">
                         <NavigationButton href="/" name="Home" />
                         <NavigationButton href="/manga" name="Manga list" />
-                        <NavigationButton href="/libary" name="Libary" />
+                        <NavigationButton href="/library" name="Library" />
                     </div>
                     <div className="hidden lg:block w-[40px] h-[40px]">
                         <Avatar></Avatar>

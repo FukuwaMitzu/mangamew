@@ -18,7 +18,8 @@ export default function useApiMangaUnfollow(){
             if(!state.loading)setState({...state, loading:true});
             let id = params.id;
 
-            axios.delete(MangaMewAPIURL(`/manga/${id}/follow`),{
+            // axios.delete(MangaMewAPIURL(`/manga/${id}/follow`),{
+            axios.delete(`https://api.mangadex.org/manga/${id}/follow`,{ 
                 headers:{
                     "Authorization": `Bearer ${userSelector.token}`
                 },

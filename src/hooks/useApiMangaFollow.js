@@ -18,7 +18,8 @@ export default function useApiMangaFollow(){
             if(!state.loading)setState({...state, loading:true});
             let id = params.id;
 
-            axios.post(MangaMewAPIURL(`/manga/${id}/follow`),{},{
+            // axios.post(MangaMewAPIURL(`/manga/${id}/follow`),{},{
+            axios.post(`https://api.mangadex.org/manga/${id}/follow`,{},{
                 headers:{
                     "Authorization": `Bearer ${userSelector.token}`
                 },

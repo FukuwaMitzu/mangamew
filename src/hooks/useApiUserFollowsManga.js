@@ -28,6 +28,7 @@ export default function useApiUserFollowsManga() {
         if (mountRef.current && userSelector.isAuthenticated) {
             if (!state.loading) setState({ ...state, loading: true }); 
             axios.get(MangaMewAPIURL("/user/follows/manga"),
+            // axios.get("https://api.mangadex.org/user/follows/manga",
                 {
                     params: {
                         ...initParams,
