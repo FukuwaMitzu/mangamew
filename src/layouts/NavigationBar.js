@@ -1,17 +1,23 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback} from "react";
+import { useCallback, useEffect, useState} from "react";
 import { useDispatch} from "react-redux";
 import Avatar from "src/components/Avatar";
 import NavigationButton from "src/components/NavigationButton";
 import SearchBar from "src/components/SearchBar";
+import useAuth from "src/hooks/useAuth";
 import { onSideBarTrigger } from "src/reducers/sideBarReducer";
 
 
 export default function NavigationBar() {
     const router = useRouter();
+    const auth = useAuth();
     const storeDispatch = useDispatch();
    
+
+    useEffect(()=>{
+        
+    });
 
 
     const triggerSideBar = useCallback(() => {

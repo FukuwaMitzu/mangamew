@@ -17,7 +17,7 @@ export default function useApiMangaFollow(){
         if (mountRef.current && userSelector.isAuthenticated) {
             if(!state.loading)setState({...state, loading:true});
             let id = params.id;
-
+              
             axios.post(MangaMewAPIURL(`/manga/${id}/follow`),{},{
             // axios.post(`https://api.mangadex.org/manga/${id}/follow`,{},{
                 headers:{
@@ -26,7 +26,8 @@ export default function useApiMangaFollow(){
             }
             ).then(
                 ({ data, status }) => {
-                    if(status === 200){                    
+                    if(status === 200){   
+                                       
                         setState({
                             ...state,
                             result:{
