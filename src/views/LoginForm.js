@@ -16,7 +16,7 @@ export default function LoginForm() {
 
     const handleSubmit = (e)=>{
         // axios.post(MangaMewAPIURL("/auth/login"),{
-        axios.post("https://api.mangadex.org/autho/login",{
+        axios.post("https://api.mangadex.org/auth/login",{
             username:e.loginUsername.value,
             email: e.loginUsername.value,
             password: e.loginPassword.value,
