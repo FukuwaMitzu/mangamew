@@ -19,8 +19,8 @@ export default function App(props) {
        if(!userSelector.isReady)return;
        if(!userSelector.token && userSelector.refreshToken)
        {
-            // axios.post(MangaMewAPIURL("/auth/refresh"),{
-            axios.post("https://api.mangadex.org/auth/refresh",{
+            axios.post(MangaMewAPIURL("/auth/refresh"),{
+            // axios.post("https://api.mangadex.org/auth/refresh",{
                 token: userSelector.refreshToken
             }).then(({data})=>{
                 storeDispatch(saveAuthTokens({token: data.token.session, refreshToken: data.token.refresh}));

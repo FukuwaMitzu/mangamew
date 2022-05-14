@@ -88,6 +88,7 @@ export async function getServerSideProps({ query }) {
       });
 
       let seasonal = {};
+
       seasonal.id = result.data.data[0].id;
       seasonal.name = result.data.data[0].attributes.name;
       seasonal.mangaIds = result.data.data[0].relationships.filter(item=>item.type=="manga").map(item=>item.id);
