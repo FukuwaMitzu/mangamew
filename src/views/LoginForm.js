@@ -11,12 +11,14 @@ import { useState } from "react";
 
 export default function LoginForm() {
     const router = useRouter();
+    const [isLoading, setLoading] = useState(false);
     const [err, setErr] = useState(null);
     const storeDispatch = useDispatch();
 
 
 
     const handleSubmit = (e)=>{
+        setLoading(true);
         axios.post(MangaMewAPIURL("/auth/login"),{
         // axios.post("https://api.mangadex.org/auth/login",{
             username:e.loginUsername.value,
@@ -27,12 +29,14 @@ export default function LoginForm() {
                 if(status==200){
                     storeDispatch(saveAuthTokens({token: data.token.session, refreshToken: data.token.refresh}));
                     router.push("/");
+                    setLoading(false);
                 }
             }
         ).catch((e)=>{
             if(e.response){
                 setErr(e.response.data);
             }
+            setLoading(false);
         });
     }
 
@@ -43,7 +47,7 @@ export default function LoginForm() {
                 <div className="flex flex-col gap-2">
                     <TextBox label={"username"} id="loginUsername"></TextBox>
                     <TextBox label={"password"} type="password" id="loginPassword"></TextBox>
-                    <Submit name="Login"></Submit>
+                    <Submit name="Login" isLoading={isLoading}></Submit>
                 </div>
             </Form>
             {

@@ -34,8 +34,9 @@ const userReducer = createReducer(initState,(builder)=>{
         state.token = action.payload.token;
     });
     builder.addCase(resetAuth, (state, action)=>{
-        Object.assign(state, initState);
-        state = {...state, isAuthenticated: true}
+        Object.assign(state, {...initState, isAuthenticated: false, isReady:true});
+        Cookies.remove("auth.token");
+        Cookies.remove("auth.refreshToken");
     });
 });
 

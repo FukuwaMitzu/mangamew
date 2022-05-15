@@ -49,20 +49,12 @@ function SideBar(props) {
                     </li>
                     <hr className="my-3"></hr>
                     <li>
-                        <SideBarButton href="/libary">
+                        <SideBarButton href="/library">
                             <div className="flex items-center gap-2">
                                 <span className="material-icons-outlined">class</span>
-                                <span className="font-bold">Libary</span>
+                                <span className="font-bold">Library</span>
                             </div>
                         </SideBarButton>
-                        <ul className="pl-2 flex flex-col gap-1 text-sm">
-                            <li>
-                                <SideBarButton href="/libary/updates">Updates</SideBarButton>
-                            </li>
-                            <li>
-                                <SideBarButton href="/libary/history">History</SideBarButton>
-                            </li>
-                        </ul>
                     </li>
                     <hr className="my-3"></hr>
                     <li>

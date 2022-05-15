@@ -66,10 +66,10 @@ export default function Home({seasonal}) {
             <SeasonalSwiperList list={mangaApi.result.data} />
           }
         </NavigationSection>
-        <NavigationSection title="TAGS YOU MAY LIKE" href="/tag/recommended">
+        <NavigationSection title="TAGS YOU MAY LIKE">
           <TagSwiperList list={tagList} />
         </NavigationSection>
-        <NavigationSection title="LATEST UPDATE" href="/manga/latest">
+        <NavigationSection title="LATEST UPDATE">
           <HomeChapterView></HomeChapterView>
         </NavigationSection>
       </div>
