@@ -1,7 +1,7 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 export default function ShowMore({ children, height}) {
-    const [state, setState] = useState(true);
+    const [state, setState] = useState(false);
     const containerRef = useRef({});
     const childrenRef = useRef({});
 
@@ -30,7 +30,9 @@ export default function ShowMore({ children, height}) {
             }
         });
     }
-
+    useEffect(()=>{
+        setState(true);
+    }, []);
     return (
         <Fragment>
             <div className={`relative overflow-hidden`} ref={containerRef} style={{height: initHeight < childrenRef.current.offsetHeight ? initHeight : "auto"}}>

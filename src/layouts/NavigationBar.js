@@ -44,7 +44,7 @@ export default function NavigationBar() {
                 window.removeEventListener('click', onClick);
             }
         }
-    }, [focus]);
+    }, [router, focus]);
 
 
     const triggerSideBar = useCallback(() => {

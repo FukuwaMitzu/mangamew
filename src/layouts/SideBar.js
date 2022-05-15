@@ -6,13 +6,13 @@ const sideBarWidth = 250;
 
 function SideBar(props) {
     const storeDispatch = useDispatch();
-    const triggerSideBar = ()=>{
+    const triggerSideBar = () => {
         storeDispatch(onSideBarTrigger());
     }
     return (
         <Fragment>
-            <div className={`fixed inset-0 shade w-full h-full z-50 ${props.isActive? 'animate-fade-in':'hidden'}`} onClick={triggerSideBar}></div>
-            <div className="fixed transition-all bg-dominant z-50 flex-shrink-0" style={{width: sideBarWidth, marginLeft: props.isActive? 0 : -sideBarWidth}}>
+            <div className={`fixed inset-0 shade w-full h-full z-50 ${props.isActive ? 'animate-fade-in' : 'hidden'}`} onClick={triggerSideBar}></div>
+            <div className="fixed transition-all bg-dominant z-50 flex-shrink-0" style={{ width: sideBarWidth, marginLeft: props.isActive ? 0 : -sideBarWidth }}>
                 <ul className="sticky inset-0 h-screen overflow-y-auto overscroll-contain content px-3 py-4">
                     <li className="flex mb-3">
                         <div className="flex-1"></div>
@@ -54,7 +54,13 @@ function SideBar(props) {
                                 <span className="material-icons-outlined">class</span>
                                 <span className="font-bold">Library</span>
                             </div>
+
                         </SideBarButton>
+                        <ul className="pl-2 flex flex-col gap-1 text-sm">
+                            <li>
+                                <SideBarButton href="/library/updates">Updates</SideBarButton>
+                            </li>
+                        </ul>
                     </li>
                     <hr className="my-3"></hr>
                     <li>
@@ -71,7 +77,7 @@ function SideBar(props) {
     );
 }
 
-const mapStateWithProps = (state)=>{
+const mapStateWithProps = (state) => {
     return {
         isActive: state.SideBar.isActive
     }
